@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mkdir -p log
+
+if [ -f "log/log.out" ]; then
+    mv log/log.out log/log-`date +%F%T`.out
+fi
+
+npm start >> log/log.out &

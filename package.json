@@ -1,0 +1,24 @@
+{
+  "name": "jira-checker",
+  "version": "1.0.0-alpha-1",
+  "description": "Verificador de tarefas atribuidas no Jira",
+  "main": "index.js",
+  "bin": {
+    "jira-check": "./index.js"
+  },
+  "preferGlobal": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gustavo Coleta (GCOLETAALVES)",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "24.3.1"
+  },
+  "dependencies": {
+    "node-cron": "3.0.2",
+    "prompt-sync": "4.2.0",
+    "request": "2.88.2"
+  }
+}
