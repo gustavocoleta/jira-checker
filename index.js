@@ -1,7 +1,6 @@
-const { app, Menu, Tray, BrowserWindow } = require('electron');
-
-const iconWhite32 = `assets/icons/jira-white-32.png`;
-const icon = `assets/icons/jira.png`;
+const { app, shell, Menu, Tray, BrowserWindow } = require('electron');
+const iconWhite32 = 'assets/icons/jira-white-32.png';
+const iconApp = 'assets/icons/jira.png';
 
 let tray = null;
 let config = null;
@@ -12,10 +11,18 @@ app.whenReady().then(() => {
   tray = new Tray(iconWhite32);
   tray.setToolTip('Jira Checker');
 
+  loadConfig();
+
+  loadMainWindow();
+
+  findNewTask(true);
+});
+
+function loadMainWindow() {
   mainWindow = new BrowserWindow({
     show: false,
     autoHideMenuBar: true,
-    icon: icon,
+    icon: iconApp,
     title: 'Jira Checker',
   });
 
@@ -24,17 +31,13 @@ app.whenReady().then(() => {
     event.preventDefault();
   });
 
-  mainWindow.on('app-command', (e, cmd) => {
-    // Navigate the window back when the user hits their mouse back button
-    if (cmd === 'browser-backward' && win.webContents.canGoBack()) {
-      win.webContents.goBack();
-    }
+  mainWindow.loadURL(`${config.url}`);
+
+  mainWindow.webContents.setWindowOpenHandler((edata) => {
+    shell.openExternal(edata.url);
+    return { action: 'deny' };
   });
-
-  loadConfig();
-
-  findNewTask(true);
-});
+}
 
 function loadConfig() {
   const fs = require('fs');
@@ -43,24 +46,24 @@ function loadConfig() {
     const prompt = require('prompt-sync')({ sigint: true });
 
     const url = prompt(
-      'Informe a Jira URL (algo parecido com https://nome-empresa.atlassian.net): '
+      'Informe a Jira URL (algo parecido com https://nome-empresa.atlassian.net): ',
     );
     const urlTaskClick =
       prompt(
-        'Informe a URL que será aberta ao clicar nas tarefas atribuidas (não obrigatório): '
+        'Informe a URL que será aberta ao clicar nas tarefas atribuidas (não obrigatório): ',
       ) || url + '/jira/your-work';
     const email = prompt('Informe o email do seu usuário no Jira: ');
     const senha = prompt(
-      'Informe seu Token de API do Jira (voce pode obter/gerar ele aqui: https://id.atlassian.com/manage/api-tokens): '
+      'Informe seu Token de API do Jira (voce pode obter/gerar ele aqui: https://id.atlassian.com/manage/api-tokens): ',
     );
 
     const auth = Buffer.from(email + ':' + senha).toString('base64');
 
     const configuration = {
-      url: url,
-      urlTaskClick: urlTaskClick,
-      email: email,
-      auth: auth,
+      url,
+      urlTaskClick,
+      email,
+      auth,
     };
 
     fs.writeFileSync('./config.json', JSON.stringify(configuration));
@@ -72,13 +75,13 @@ function loadConfig() {
 function findNewTask(startSchedule) {
   info('finding new tasks...');
 
-  var request = require('request');
+  const request = require('request');
 
   const url = `${config.url}/rest/api/2/search?jql=assignee='${config.email}'%26status!=Fechado%26status!=Cancelado`;
 
-  var options = {
+  const options = {
     method: 'GET',
-    url: url,
+    url,
     headers: {
       Authorization: 'Basic ' + config.auth,
       Cookie:
@@ -90,7 +93,7 @@ function findNewTask(startSchedule) {
     try {
       if (err) throw new Error(err);
 
-      result = JSON.parse(response.body);
+      const result = JSON.parse(response.body);
 
       if (result.errorMessages) {
         error(result.errorMessages);
@@ -116,7 +119,7 @@ function findNewTask(startSchedule) {
 }
 
 function scheduleFindNewTaks() {
-  var cron = require('node-cron');
+  const cron = require('node-cron');
 
   cron.schedule('*/5 * * * *', () => {
     findNewTask(false);
@@ -127,7 +130,7 @@ function updateContextMenu(taskCount) {
   let taskAtribuidaLabel = 'Nenhuma task atribuida';
 
   if (taskCount > 0) {
-    iconWithTaks = `assets/icons/jira-blue/+9.png`;
+    let iconWithTaks = 'assets/icons/jira-blue/+9.png';
 
     if (taskCount < 10) {
       iconWithTaks = `assets/icons/jira-blue/${taskCount}.png`;
@@ -143,17 +146,22 @@ function updateContextMenu(taskCount) {
     {
       label: taskAtribuidaLabel,
       click: function () {
-        // shell.openExternal(`${config.urlTaskClick}`);
         mainWindow.loadURL(`${config.urlTaskClick}`);
-        mainWindow.show();
+        mainWindow.maximize();
       },
     },
     { type: 'separator' },
     {
       label: 'Página Inicial',
       click: function () {
-        // shell.openExternal(`${config.url}`);
         mainWindow.loadURL(`${config.url}`);
+        mainWindow.maximize();
+      },
+    },
+    { type: 'separator' },
+    {
+      label: 'Exibir',
+      click: function () {
         mainWindow.show();
       },
     },
