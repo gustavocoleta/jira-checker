@@ -53,6 +53,7 @@ async function handleMenu(app, mainWindow, tasks) {
       label: 'Exibir',
       click: function () {
         mainWindow.show();
+        mainWindow.maximize();
       },
     },
     {

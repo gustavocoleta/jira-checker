@@ -1,4 +1,4 @@
-const { app, shell, Tray, BrowserWindow } = require('electron');
+const { app, shell, Tray, BrowserWindow, Notification } = require('electron');
 const { handleMenu } = require('./src/menu.service');
 const { info, error, warning } = require('./src/log.service');
 const { getTarefas } = require('./src/tarefa.service');
@@ -6,10 +6,12 @@ const { loadConfig } = require('./src/config.service');
 const iconWhite32 = 'assets/icons/jira-white-32.png';
 const iconApp = 'assets/icons/jira.png';
 
-let tray = null;
 let config = null;
-
+let tray = null;
 let mainWindow = null;
+let notification = null;
+
+let lastTaskCheck = null;
 
 app.whenReady().then(async () => {
   tray = new Tray(iconWhite32);
@@ -17,12 +19,10 @@ app.whenReady().then(async () => {
 
   config = await loadConfig();
 
-  await loadMainWindow();
-
-  await findNewTask(true);
+  await initialize();
 });
 
-async function loadMainWindow() {
+async function initialize() {
   mainWindow = new BrowserWindow({
     show: false,
     autoHideMenuBar: true,
@@ -42,6 +42,18 @@ async function loadMainWindow() {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
+
+  notification = new Notification({
+    title: 'Jira Checker',
+    icon: iconApp,
+  });
+
+  notification.on('click', () => {
+    mainWindow.loadURL(`${config.urlTaskClick}`);
+    mainWindow.maximize();
+  });
+
+  await findNewTask(true);
 }
 
 async function findNewTask(startSchedule) {
@@ -68,6 +80,8 @@ async function findNewTask(startSchedule) {
   });
 
   await updateTrayMenu(tasks);
+
+  await checkNotification(tasks);
 
   if (startSchedule) {
     scheduleFindNewTaks();
@@ -98,4 +112,32 @@ async function updateTrayMenu(tasks) {
   const menu = await handleMenu(app, mainWindow, tasks);
 
   tray.setContextMenu(menu);
+}
+
+async function checkNotification(tasks) {
+  if (!lastTaskCheck) {
+    lastTaskCheck = tasks;
+    return;
+  }
+
+  const newTask = tasks.map((task) => `${task.key}`);
+  const oldTask = lastTaskCheck.map((task) => `${task.key}`);
+
+  const countDiff = newTask.length - oldTask.length;
+
+  const isEqual =
+    JSON.stringify(newTask.sort()) === JSON.stringify(oldTask.sort());
+
+  if (!isEqual && countDiff > 0) {
+    let mensagem = `Você tem ${countDiff} nova tarefa`;
+
+    if (countDiff > 1) {
+      mensagem = `Você tem ${countDiff} novas tarefas`;
+    }
+
+    notification.body = mensagem;
+    notification.show();
+  }
+
+  lastTaskCheck = tasks;
 }
