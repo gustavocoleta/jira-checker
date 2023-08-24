@@ -24,7 +24,4 @@ A credencial de acesso ao Jira, solicitada no primeiro start, pode ser gerada [n
 
 ## TODO
 
-- Notificação quando houverem novas tarefas
-- Ícone para identificar tarefa com Impedimento, no menu **X tarefas atribuídas** no System Tray
-- Icone para sinalizar erros no System Tray
-- Unit Test
+Visualizar [aqui](./TODO.md)
