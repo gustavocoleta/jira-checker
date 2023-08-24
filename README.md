@@ -2,6 +2,8 @@
 
 Verificador de tarefas atribuidas no Jira
 
+O menu e o ícone são atualizado automáticamente a cada 5 minutos.
+
 ## Start
 
 - Clone o repositório;
@@ -19,3 +21,10 @@ Apague o arquivo `config.json`.
 ## Útil
 
 A credencial de acesso ao Jira, solicitada no primeiro start, pode ser gerada [neste link](https://id.atlassian.com/manage/api-tokens)
+
+## TODO
+
+- Notificação quando houverem novas tarefas
+- Ícone para identificar tarefa com Impedimento, no menu **X tarefas atribuídas** no System Tray
+- Icone para sinalizar erros no System Tray
+- Unit Test

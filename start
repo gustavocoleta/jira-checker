@@ -1,9 +1,18 @@
 #!/bin/bash
 
+DIR="$(dirname "$(readlink -f "$0")")"
+
+cd $DIR
+
 mkdir -p log
 
 if [ -f "log/log.out" ]; then
     mv log/log.out log/log-`date +%F%T`.out
 fi
 
-npm start >> log/log.out &
+if [ -f "config.json" ]; then
+    npm start >> log/log.out &
+
+else
+    npm start
+fi
