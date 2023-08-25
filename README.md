@@ -16,7 +16,7 @@ Ao clicar no ícone, no System Tray, serão exibidas as opções:
 - **Exibir:** abre a aplicação, na última página exibida;
 - **Fechar:** encerra a aplicação
 
-Ao clicar no botão para fechar a janela da aplicação, e aplicação não será encerrada, e sim minimizada no System Tray.
+Ao clicar no botão para fechar a janela da aplicação, a aplicação não será encerrada, e sim minimizada no System Tray.
 
 ## Setup
 
