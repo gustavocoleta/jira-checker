@@ -1,5 +1,7 @@
-const { Menu, MenuItem } = require('electron');
+const { Menu, MenuItem, dialog } = require('electron');
 const { loadConfig } = require('./config.service');
+const fs = require('fs');
+const path = require('path');
 
 async function handleMenu(app, mainWindow, tasks) {
   const config = await loadConfig();
@@ -60,6 +62,24 @@ async function handleMenu(app, mainWindow, tasks) {
       label: 'Fechar',
       click: function () {
         app.exit(0);
+      },
+    },
+    { type: 'separator' },
+    {
+      label: 'Sobre',
+      click: function () {
+        const contentPackage = fs.readFileSync(
+          path.join(__dirname, '../') + 'package.json',
+          'utf8',
+        );
+
+        const versao = JSON.parse(contentPackage).version;
+
+        dialog.showMessageBox({
+          type: 'question',
+          message: 'Jira Checker',
+          detail: `Versão: ${versao}`,
+        });
       },
     },
   ]);
