@@ -27,8 +27,14 @@ Ao clicar no botão para fechar a janela da aplicação, a aplicação não ser�
 ### Install
 
 - Clone o repositório;
-- Navegue pelo terminal até a pasta do repositório e execute: `./start`
-- Ao executar pela primeira vez, alguns dados de acesso serão solicitados. Siga as instruções no terminal.
+- Navegue pelo terminal até a pasta do repositório e execute o comando `./start`;
+- Ao executar pela primeira vez, alguns dados de acesso serão solicitados. Siga as instruções no terminal;
+
+### Update
+
+- Feche a aplicação;
+- Navegue pelo terminal até a pasta do repositório e executeo comando `git pull`;
+- Execute o comando `./start` para iniciar novamente a aplicação;
 
 ### Start
 
