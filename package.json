@@ -1,6 +1,6 @@
 {
   "name": "jira-checker",
-  "version": "1.0.0-alpha-2",
+  "version": "1.0.0-alpha-3",
   "description": "Verificador de tarefas atribuidas no Jira",
   "main": "index.js",
   "bin": {
