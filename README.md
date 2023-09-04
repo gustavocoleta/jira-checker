@@ -52,4 +52,6 @@ A credencial de acesso ao Jira, solicitada no primeiro start, pode ser gerada [n
 
 ## TODO
 
-Visualizar [aqui](./TODO.md)
+Visualizar [aqui](https://github.com/gustavocoleta/jira-checker/issues)
+
+
