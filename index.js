@@ -3,7 +3,8 @@ const { handleMenu } = require('./src/menu.service');
 const { info, error, warning } = require('./src/log.service');
 const { getTarefas } = require('./src/tarefa.service');
 const { loadConfig } = require('./src/config.service');
-const iconWhite32 = 'assets/icons/jira-white-32.png';
+const request = require('request');
+const iconWhite48 = 'assets/icons/jira-white-48.png';
 const iconApp = 'assets/icons/jira.png';
 
 let config = null;
@@ -13,8 +14,10 @@ let notification = null;
 
 let lastTaskCheck = null;
 
+app.setName('Jira Checker');
+
 app.whenReady().then(async () => {
-  tray = new Tray(iconWhite32);
+  tray = new Tray(iconWhite48);
   tray.setToolTip('Jira Checker');
 
   config = await loadConfig();
@@ -34,6 +37,10 @@ async function initialize() {
   mainWindow.on('close', (event) => {
     mainWindow.hide();
     event.preventDefault();
+  });
+
+  mainWindow.on('show', () => {
+    findNewTask(false);
   });
 
   mainWindow.loadURL(`${config.url}`);
@@ -106,7 +113,7 @@ async function updateTrayMenu(tasks) {
 
     tray.setImage(iconWithTaks);
   } else {
-    tray.setImage(iconWhite32);
+    tray.setImage(iconWhite48);
   }
 
   const menu = await handleMenu(app, mainWindow, tasks);
@@ -137,6 +144,13 @@ async function checkNotification(tasks) {
 
     notification.body = mensagem;
     notification.show();
+
+    if (config.webHookNewTask) {
+      request({
+        method: 'GET',
+        url: config.webHookNewTask,
+      });
+    }
   }
 
   lastTaskCheck = tasks;

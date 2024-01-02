@@ -2,7 +2,7 @@
 
 Ao iniciar a aplicação, um ícone será adicionado ao System Tray, e ele irá sinalizar as situações:
 
-> <img src="assets/icons/jira-white-32.png" alt="Nenhuma tarefa" width="12" height="12"> - Nenhuma tarefa
+> <img src="assets/icons/jira-white-48.png" alt="Nenhuma tarefa" width="12" height="12"> - Nenhuma tarefa
 >
 > <img src="assets/icons/jira-blue/1.png" alt="Nenhuma tarefa" width="12" height="12"> - Um tarefa, ou mais (o badge numerico indica a quantidade de tarefas atribuídas)
 
@@ -53,5 +53,3 @@ A credencial de acesso ao Jira, solicitada no primeiro start, pode ser gerada [n
 ## TODO
 
 Visualizar [aqui](https://github.com/gustavocoleta/jira-checker/issues)
-
-
