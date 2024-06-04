@@ -15,17 +15,13 @@
   "author": "Gustavo Coleta (GCOLETAALVES)",
   "license": "ISC",
   "devDependencies": {
-    "electron": "24.3.1",
-    "eslint": "8.45.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-config-standard": "17.1.0",
-    "eslint-plugin-import": "2.27.5",
-    "eslint-plugin-n": "16.0.1",
-    "eslint-plugin-promise": "6.1.1",
-    "prettier": "3.0.0"
+    "eslint": "9.4.0",
+    "eslint-config-prettier": "9.1.0",
+    "prettier": "3.3.0"
   },
   "dependencies": {
-    "node-cron": "3.0.2",
+    "electron": "30.0.9",
+    "node-cron": "3.0.3",
     "prompt-sync": "4.2.0",
     "request": "2.88.2"
   }

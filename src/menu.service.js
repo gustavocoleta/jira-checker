@@ -7,6 +7,9 @@ async function handleMenu(app, mainWindow, tasks) {
   const config = await loadConfig();
 
   const subMenuTaks = new Menu();
+  const subMenuFavoriteProjects = new Menu();
+
+  const configFavorites = config.favoriteProjects || [];
 
   let taskAtribuidaLabel = 'Nenhuma tarefa atribuida';
 
@@ -24,6 +27,19 @@ async function handleMenu(app, mainWindow, tasks) {
         label: `${task.key} (${task.status})`,
         click: function () {
           mainWindow.loadURL(`${config.url}/browse/${task.key}`);
+          mainWindow.maximize();
+        },
+      }),
+    );
+  });
+
+  // montar atravez da request p/ ober o nome, e deixar na config só o key
+  configFavorites.forEach((project) => {
+    subMenuFavoriteProjects.append(
+      new MenuItem({
+        label: project.name,
+        click: function () {
+          mainWindow.loadURL(`${config.url}/browse/${project.key}`);
           mainWindow.maximize();
         },
       }),
@@ -49,6 +65,11 @@ async function handleMenu(app, mainWindow, tasks) {
         mainWindow.loadURL(`${config.url}`);
         mainWindow.maximize();
       },
+    },
+    {
+      label: 'Projetos Favoritos',
+      submenu: subMenuFavoriteProjects,
+      id: 'favoriteProjects',
     },
     { type: 'separator' },
     {
@@ -83,6 +104,12 @@ async function handleMenu(app, mainWindow, tasks) {
       },
     },
   ]);
+
+  if (configFavorites.length === 0) {
+    contextMenu.items.find(
+      (item) => item.id === 'favoriteProjects',
+    ).visible = false;
+  }
 
   return contextMenu;
 }
