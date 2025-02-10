@@ -30,6 +30,14 @@ Ao clicar no botão para fechar a janela da aplicação, a aplicação não ser�
 - Navegue pelo terminal até a pasta do repositório e execute o comando `./start`;
 - Ao executar pela primeira vez, alguns dados de acesso serão solicitados. Siga as instruções no terminal;
 
+#### Desktop Icon
+
+- Copiar para a pasta /usr/share/applications o arquivo `jira-checker.desktop` que está na raiz do repositório, e dar permissão de execução ao arquivo.
+  ```bash
+  sudo cp jira-checker.desktop /usr/share/applications
+  sudo chmod 775 /usr/share/applications/jira-checker.desktop
+  ```
+
 ### Update
 
 - Feche a aplicação;
@@ -53,3 +61,13 @@ A credencial de acesso ao Jira, solicitada no primeiro start, pode ser gerada [n
 ## TODO
 
 Visualizar [aqui](https://github.com/gustavocoleta/jira-checker/issues)
+
+## Erro ao iniciar
+
+Se apresentar o erro: `The SUID sandbox helper binary was found, but is not configured correctly. Rather than run without sandboxing I'm aborting now. You need to make sure that ... is owned by root and has mode 4755.`, Executar os comandos abaixo:
+
+```bash
+cd node_modules/electron/dist/
+sudo chown root:root chrome-sandbox
+sudo chmod 4755 chrome-sandbox
+```

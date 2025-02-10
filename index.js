@@ -43,6 +43,10 @@ async function initialize() {
     findNewTask(false);
   });
 
+  mainWindow.on('focus', () => {
+    findNewTask(false);
+  });
+
   mainWindow.loadURL(`${config.url}`);
 
   mainWindow.webContents.setWindowOpenHandler((edata) => {
