@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Jira Checker
+Exec=/home/gustavo-coleta/GitHub/jira-checker/start
+Terminal=false
+Type=Application
+Icon=/home/gustavo-coleta/GitHub/jira-checker/assets/icons/jira.png
+Categories=Development

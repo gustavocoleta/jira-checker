@@ -27,7 +27,9 @@ async function handleMenu(app, mainWindow, tasks) {
         label: `${task.key} (${task.status})`,
         click: function () {
           mainWindow.loadURL(`${config.url}/browse/${task.key}`);
-          mainWindow.maximize();
+          if (!mainWindow.isMaximized()) {
+            mainWindow.maximize();
+          }
         },
       }),
     );
@@ -40,7 +42,9 @@ async function handleMenu(app, mainWindow, tasks) {
         label: project.name,
         click: function () {
           mainWindow.loadURL(`${config.url}/browse/${project.key}`);
-          mainWindow.maximize();
+          if (!mainWindow.isMaximized()) {
+            mainWindow.maximize();
+          }
         },
       }),
     );
@@ -48,24 +52,42 @@ async function handleMenu(app, mainWindow, tasks) {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Ver todas tarefas',
+      label: 'Exibir',
       click: function () {
-        mainWindow.loadURL(`${config.urlTaskClick}`);
-        mainWindow.maximize();
+        mainWindow.show();
+
+        if (!mainWindow.isMaximized()) {
+          mainWindow.maximize();
+        }
       },
     },
+    {
+      label: 'Todas tarefas',
+      click: function () {
+        mainWindow.loadURL(`${config.urlTaskClick}`);
+
+        if (!mainWindow.isMaximized()) {
+          mainWindow.maximize();
+        }
+      },
+    },
+    {
+      label: 'Página Inicial',
+      click: function () {
+        mainWindow.loadURL(`${config.url}`);
+
+        if (!mainWindow.isMaximized()) {
+          mainWindow.maximize();
+        }
+      },
+    },
+    { type: 'separator' },
     {
       label: taskAtribuidaLabel,
       submenu: subMenuTaks,
     },
     { type: 'separator' },
-    {
-      label: 'Página Inicial',
-      click: function () {
-        mainWindow.loadURL(`${config.url}`);
-        mainWindow.maximize();
-      },
-    },
+
     {
       label: 'Projetos Favoritos',
       submenu: subMenuFavoriteProjects,
@@ -73,19 +95,11 @@ async function handleMenu(app, mainWindow, tasks) {
     },
     { type: 'separator' },
     {
-      label: 'Exibir',
-      click: function () {
-        mainWindow.show();
-        mainWindow.maximize();
-      },
-    },
-    {
       label: 'Fechar',
       click: function () {
         app.exit(0);
       },
     },
-    { type: 'separator' },
     {
       label: 'Sobre',
       click: function () {
@@ -106,9 +120,8 @@ async function handleMenu(app, mainWindow, tasks) {
   ]);
 
   if (configFavorites.length === 0) {
-    contextMenu.items.find(
-      (item) => item.id === 'favoriteProjects',
-    ).visible = false;
+    contextMenu.items.find((item) => item.id === 'favoriteProjects').visible =
+      false;
   }
 
   return contextMenu;
