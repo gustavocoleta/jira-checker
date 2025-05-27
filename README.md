@@ -2,9 +2,9 @@
 
 Ao iniciar a aplicação, um ícone será adicionado ao System Tray, e ele irá sinalizar as situações:
 
-> <img src="assets/icons/jira-white-48.png" alt="Nenhuma tarefa" width="12" height="12"> - Nenhuma tarefa
+> <img src="assets/icons/jira.png" alt="Nenhuma tarefa" width="12" height="12"> - Nenhuma tarefa
 >
-> <img src="assets/icons/jira-blue/1.png" alt="Nenhuma tarefa" width="12" height="12"> - Um tarefa, ou mais (o badge numerico indica a quantidade de tarefas atribuídas)
+> <img src="assets/icons/badge/1.png" alt="Nenhuma tarefa" width="12" height="12"> - Um tarefa, ou mais (o badge numerico indica a quantidade de tarefas atribuídas)
 
 A verificação de tarefas ocorre automáticamente a cada 5 minutos, e caso existam novas tarefas, uma notificação será exibida informando a quantidade de novas tarefas.
 
@@ -41,7 +41,7 @@ Ao clicar no botão para fechar a janela da aplicação, a aplicação não ser�
 ### Update
 
 - Feche a aplicação;
-- Navegue pelo terminal até a pasta do repositório e executeo comando `git pull`;
+- Navegue pelo terminal até a pasta do repositório e execute o comando `git pull`;
 - Execute o comando `./start` para iniciar novamente a aplicação;
 
 ### Start

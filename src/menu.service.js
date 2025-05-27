@@ -66,6 +66,8 @@ async function handleMenu(app, mainWindow, tasks) {
       click: function () {
         mainWindow.loadURL(`${config.urlTaskClick}`);
 
+        mainWindow.show();
+
         if (!mainWindow.isMaximized()) {
           mainWindow.maximize();
         }
@@ -75,6 +77,8 @@ async function handleMenu(app, mainWindow, tasks) {
       label: 'Página Inicial',
       click: function () {
         mainWindow.loadURL(`${config.url}`);
+
+        mainWindow.show();
 
         if (!mainWindow.isMaximized()) {
           mainWindow.maximize();

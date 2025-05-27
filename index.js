@@ -4,8 +4,7 @@ const { info, error, warning } = require('./src/log.service');
 const { getTarefas } = require('./src/tarefa.service');
 const { loadConfig } = require('./src/config.service');
 const request = require('request');
-const iconWhite48 = 'assets/icons/jira-white-48.png';
-const iconApp = 'assets/icons/jira.png';
+const icon = 'assets/icons/jira.png';
 
 let config = null;
 let tray = null;
@@ -17,7 +16,7 @@ let lastTaskCheck = null;
 app.setName('Jira Checker');
 
 app.whenReady().then(async () => {
-  tray = new Tray(iconWhite48);
+  tray = new Tray(icon);
   tray.setToolTip('Jira Checker');
 
   config = await loadConfig();
@@ -30,7 +29,7 @@ async function initialize() {
     show: false,
     autoHideMenuBar: true,
 
-    icon: iconApp,
+    icon: icon,
     title: 'Jira Checker',
   });
 
@@ -56,7 +55,7 @@ async function initialize() {
 
   notification = new Notification({
     title: 'Jira Checker',
-    icon: iconApp,
+    icon: icon,
   });
 
   notification.on('click', () => {
@@ -109,15 +108,15 @@ function scheduleFindNewTaks() {
 
 async function updateTrayMenu(tasks) {
   if (tasks.length > 0) {
-    let iconWithTaks = 'assets/icons/jira-blue/+9.png';
+    let iconWithTaks = 'assets/icons/badge/+3.png';
 
-    if (tasks.length < 10) {
-      iconWithTaks = `assets/icons/jira-blue/${tasks.length}.png`;
+    if (tasks.length <= 3) {
+      iconWithTaks = `assets/icons/badge/${tasks.length}.png`;
     }
 
     tray.setImage(iconWithTaks);
   } else {
-    tray.setImage(iconWhite48);
+    tray.setImage(icon);
   }
 
   const menu = await handleMenu(app, mainWindow, tasks);
