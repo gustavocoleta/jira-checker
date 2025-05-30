@@ -27,9 +27,8 @@ async function handleMenu(app, mainWindow, tasks) {
         label: `${task.key} (${task.status})`,
         click: function () {
           mainWindow.loadURL(`${config.url}/browse/${task.key}`);
-          if (!mainWindow.isMaximized()) {
-            mainWindow.maximize();
-          }
+          
+          showMainWindow(mainWindow);
         },
       }),
     );
@@ -42,9 +41,8 @@ async function handleMenu(app, mainWindow, tasks) {
         label: project.name,
         click: function () {
           mainWindow.loadURL(`${config.url}/browse/${project.key}`);
-          if (!mainWindow.isMaximized()) {
-            mainWindow.maximize();
-          }
+
+          showMainWindow(mainWindow);
         },
       }),
     );
@@ -54,11 +52,7 @@ async function handleMenu(app, mainWindow, tasks) {
     {
       label: 'Exibir',
       click: function () {
-        mainWindow.show();
-
-        if (!mainWindow.isMaximized()) {
-          mainWindow.maximize();
-        }
+        showMainWindow(mainWindow);
       },
     },
     {
@@ -66,11 +60,7 @@ async function handleMenu(app, mainWindow, tasks) {
       click: function () {
         mainWindow.loadURL(`${config.urlTaskClick}`);
 
-        mainWindow.show();
-
-        if (!mainWindow.isMaximized()) {
-          mainWindow.maximize();
-        }
+        showMainWindow(mainWindow);
       },
     },
     {
@@ -78,11 +68,7 @@ async function handleMenu(app, mainWindow, tasks) {
       click: function () {
         mainWindow.loadURL(`${config.url}`);
 
-        mainWindow.show();
-
-        if (!mainWindow.isMaximized()) {
-          mainWindow.maximize();
-        }
+        showMainWindow(mainWindow);
       },
     },
     { type: 'separator' },
@@ -129,6 +115,15 @@ async function handleMenu(app, mainWindow, tasks) {
   }
 
   return contextMenu;
+}
+
+function showMainWindow(mainWindow) {
+  if (mainWindow) {
+    mainWindow.show();
+    if (!mainWindow.isMaximized()) {
+      mainWindow.maximize();
+    }
+  }
 }
 
 module.exports = { handleMenu };

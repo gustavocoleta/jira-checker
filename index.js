@@ -26,7 +26,7 @@ app.whenReady().then(async () => {
 
 async function initialize() {
   mainWindow = new BrowserWindow({
-    show: false,
+    show: true,
     autoHideMenuBar: true,
 
     icon: icon,
