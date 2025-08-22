@@ -20,8 +20,8 @@
     "prettier": "3.3.0"
   },
   "dependencies": {
-    "electron": "30.0.9",
-    "node-cron": "3.0.3",
+    "electron": "36.4.0",
+    "node-cron": "4.1.0",
     "prompt-sync": "4.2.0",
     "request": "2.88.2"
   }
