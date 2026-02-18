@@ -5,7 +5,7 @@ async function getTarefas() {
   const config = await loadConfig();
 
   return new Promise((resolve, reject) => {
-    const url = `${config.url}/rest/api/2/search?jql=assignee='${config.email}'%26resolution=null`;
+    const url = `${config.url}/rest/api/3/search/jql?jql=assignee='${config.email}'%26resolution=null&fields={key}`;
 
     const options = {
       method: 'GET',

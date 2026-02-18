@@ -24,10 +24,10 @@ async function handleMenu(app, mainWindow, tasks) {
   tasks.forEach((task) => {
     subMenuTaks.append(
       new MenuItem({
-        label: `${task.key} (${task.status})`,
+        label: `${task.key}`,
         click: function () {
           mainWindow.loadURL(`${config.url}/browse/${task.key}`);
-          
+
           showMainWindow(mainWindow);
         },
       }),

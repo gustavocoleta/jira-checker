@@ -81,12 +81,12 @@ async function findNewTask(startSchedule) {
     return;
   }
 
-  info(`tarefas atribuidas: ${result.total}`);
+  info(`tarefas atribuidas: ${result.issues.length}`);
 
   const tasks = [];
 
   result.issues.forEach((issue) => {
-    tasks.push({ key: issue.key, status: issue.fields.status.name });
+    tasks.push({ id: issue.id, key: issue.key });
   });
 
   await updateTrayMenu(tasks);
