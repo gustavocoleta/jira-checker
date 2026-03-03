@@ -26,12 +26,20 @@ This is a complete rewrite of the original Electron-based application as a nativ
 
 ## Requirements
 
-- GNOME Shell 45 or 46
+- GNOME Shell 45, 46, 47, 48, or 49
 - `glib-compile-schemas` (usually included with GNOME)
 
 ## Installation
 
-### From Source
+### Quick Install
+
+Use the installer script:
+
+```bash
+./install.sh
+```
+
+### From Source (Makefile)
 
 1. Clone the repository:
 
@@ -52,7 +60,6 @@ This is a complete rewrite of the original Electron-based application as a nativ
    ```
 
 4. Restart GNOME Shell:
-
    - **X11**: Press `Alt+F2`, type `r`, and press Enter
    - **Wayland**: Log out and log back in
 
@@ -104,14 +111,10 @@ Once installed and configured:
 ├── extension.js           # Main extension entry point
 ├── prefs.js              # Preferences UI
 ├── metadata.json         # Extension metadata
+├── install.sh            # Quick installer script
 ├── schemas/              # GSettings schemas
 │   └── *.gschema.xml
-├── src/                  # TypeScript source files (for reference)
-│   ├── types.ts
-│   ├── configService.ts
-│   ├── taskService.ts
-│   ├── logService.ts
-│   └── extension.ts
+├── assets/icons/         # Panel icon assets
 ├── .old/                 # Original Electron app
 └── Makefile              # Build and installation tasks
 ```

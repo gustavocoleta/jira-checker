@@ -7,10 +7,9 @@ All notable changes to this project will be documented in this file.
 ### Changed - Major Rewrite
 
 - **Complete rewrite as GNOME Shell Extension**: Converted from Electron desktop application to native GNOME Shell extension
-- **Technology Stack**: 
+- **Technology Stack**:
   - Replaced Electron with native GNOME Shell APIs
   - Replaced Node.js with GJS (GNOME JavaScript)
-  - Added TypeScript support for development (source files in `src/`)
   - Using GSettings for configuration instead of JSON files
 - **User Interface**:
   - System tray indicator instead of separate window
