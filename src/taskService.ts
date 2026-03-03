@@ -2,8 +2,8 @@
 import { JiraConfig, JiraSearchResponse, JiraTask } from './types';
 
 export class TaskService {
-  private Soup: any;
-  private GLib: any;
+  private readonly Soup: any;
+  private readonly GLib: any;
 
   constructor(Soup: any, GLib: any) {
     this.Soup = Soup;

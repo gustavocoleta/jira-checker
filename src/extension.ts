@@ -42,7 +42,7 @@ export class JiraCheckerExtension {
   }
 
   public enable(): void {
-    this.logger.info('Enabling extension');
+    this.logger.info('[Jira Checker] Enabling extension');
 
     // Create indicator
     this.indicator = new this.PanelMenu.Button(0, 'Jira Checker', false);
@@ -66,13 +66,13 @@ export class JiraCheckerExtension {
       this.startTaskCheck();
     } else {
       this.logger.warning(
-        'Extension not configured. Please set Jira credentials in preferences.',
+        '[Jira Checker] Extension not configured. Please set Jira credentials in preferences.',
       );
     }
   }
 
   public disable(): void {
-    this.logger.info('Disabling extension');
+    this.logger.info('[Jira Checker] Disabling extension');
 
     if (this.timeoutId !== null) {
       this.GLib.Source.remove(this.timeoutId);
@@ -106,23 +106,27 @@ export class JiraCheckerExtension {
 
   private async checkTasks(): Promise<void> {
     try {
-      this.logger.info('Checking for tasks...');
+      this.logger.info('[Jira Checker] Checking for tasks...');
 
       const config = this.configService.getConfig();
       const response = await this.taskService.getTasks(config);
 
       if (response.errorMessages) {
-        this.logger.error(response.errorMessages.join(', '));
+        this.logger.error(
+          `[Jira Checker] ${response.errorMessages.join(', ')}`,
+        );
         return;
       }
 
       if (response.warningMessages) {
-        this.logger.warning(response.warningMessages.join(', '));
+        this.logger.warning(
+          `[Jira Checker] ${response.warningMessages.join(', ')}`,
+        );
         return;
       }
 
       const tasks = this.taskService.extractTasks(response);
-      this.logger.info(`Found ${tasks.length} assigned tasks`);
+      this.logger.info(`[Jira Checker] Found ${tasks.length} assigned tasks`);
 
       // Update UI
       this.updateIndicator(tasks);
@@ -133,7 +137,7 @@ export class JiraCheckerExtension {
 
       this.lastTasks = tasks;
     } catch (error) {
-      this.logger.error(`Error checking tasks: ${error}`);
+      this.logger.error(`[Jira Checker] Error checking tasks: ${error}`);
     }
   }
 
@@ -253,6 +257,10 @@ export class JiraCheckerExtension {
   }
 
   private showNotification(title: string, message: string): void {
+    this.logger.info(
+      `[Jira Checker] Showing notification: ${title} - ${message}`,
+    );
+
     this.Main.notify(title, message);
   }
 
@@ -260,17 +268,19 @@ export class JiraCheckerExtension {
     try {
       this.Gio.AppInfo.launch_default_for_uri(url, null);
     } catch (error) {
-      this.logger.error(`Failed to open URL: ${error}`);
+      this.logger.error(`[Jira Checker] Failed to open URL: ${error}`);
     }
   }
 
   private async callWebhook(url: string): Promise<void> {
     try {
+      this.logger.info(`[Jira Checker] Calling webhook: ${url}`);
+
       const session = new this.Soup.Session();
       const message = this.Soup.Message.new('GET', url);
       session.send_async(message, null, null);
     } catch (error) {
-      this.logger.error(`Failed to call webhook: ${error}`);
+      this.logger.error(`[Jira Checker] Failed to call webhook: ${error}`);
     }
   }
 }

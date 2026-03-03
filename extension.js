@@ -32,7 +32,7 @@ export default class JiraCheckerExtension extends Extension {
     super(metadata);
     this._indicator = null;
     this._timeoutId = null;
-    this._lastTasks = [];
+    this._lastTasks = null;
   }
 
   enable() {
@@ -78,7 +78,7 @@ export default class JiraCheckerExtension extends Extension {
     }
 
     this._settings = null;
-    this._lastTasks = [];
+    this._lastTasks = null;
   }
 
   _isConfigured() {
@@ -247,9 +247,16 @@ export default class JiraCheckerExtension extends Extension {
 
     // Add red dot badge when there are tasks
     if (tasks.length > 0) {
+      let color = '#FAFAFA';
+
+      if (tasks.length === 2) {
+        color = '#FFC107';
+      } else if (tasks.length >= 3) {
+        color = '#F44336';
+      }
+
       const badge = new St.Widget({
-        style:
-          'background-color: #e01b24; min-width: 7px; min-height: 7px; border-radius: 999px;',
+        style: `background-color: ${color}; min-width: 7px; min-height: 7px; border-radius: 999px;`,
         x_align: Clutter.ActorAlign.END,
         y_align: Clutter.ActorAlign.END,
         x_expand: false,
@@ -316,18 +323,23 @@ export default class JiraCheckerExtension extends Extension {
   }
 
   _checkForNewTasks(currentTasks) {
-    if (this._lastTasks.length === 0) {
+    if (this._lastTasks === null) {
       return; // First check, don't notify
     }
 
     const oldKeys = new Set(this._lastTasks.map((t) => t.key));
     const newTasks = currentTasks.filter((t) => !oldKeys.has(t.key));
 
+    console.log(`oldKeys ${JSON.stringify(oldKeys)}`);
+    console.log(`newTasks ${JSON.stringify(newTasks)}`);
+
     if (newTasks.length > 0) {
       const message =
         newTasks.length === 1
           ? `You have 1 new task: ${newTasks[0].key}`
           : `You have ${newTasks.length} new tasks`;
+
+      console.log(`[Jira Checker] New tasks found: ${message}`);
 
       Main.notify('Jira Checker', message);
 
@@ -349,9 +361,11 @@ export default class JiraCheckerExtension extends Extension {
 
   _callWebhook(url) {
     try {
+      console.log(`[Jira Checker] Calling webhook: ${url}`);
+
       const session = new Soup.Session();
       const message = Soup.Message.new('GET', url);
-      session.send_async(message, null, null);
+      session.send_async(message, 0, null, null);
     } catch (error) {
       console.error(`[Jira Checker] Failed to call webhook: ${error}`);
     }
