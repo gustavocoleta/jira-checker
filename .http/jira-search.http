@@ -1,0 +1,4 @@
+
+### search tasks
+GET https://vrsoft.atlassian.net/rest/api/3/search/jql?jql=assignee='gustavo.coleta@vrsoft.com.br'%26resolution=null&fields={key}
+Authorization: Basic {{$dotenv AUTH_TOKEN}}

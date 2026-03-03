@@ -1,28 +1,20 @@
 {
-  "name": "jira-checker",
-  "version": "1.0.0-alpha-6",
-  "description": "Verificador de tarefas atribuidas no Jira",
-  "main": "index.js",
-  "bin": {
-    "jira-check": "./index.js"
-  },
-  "preferGlobal": true,
+  "name": "jira-checker-gnome-extension",
+  "version": "2.0.0",
+  "description": "GNOME Shell extension for checking assigned Jira tasks",
+  "main": "extension.js",
   "scripts": {
-    "prestart": "npm install",
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "install-extension": "npm run build && ln -sf $PWD ~/.local/share/gnome-shell/extensions/jira-checker@gcoletaalves",
+    "compile-schemas": "glib-compile-schemas schemas/"
   },
   "author": "Gustavo Coleta (GCOLETAALVES)",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "9.4.0",
-    "eslint-config-prettier": "9.1.0",
-    "prettier": "3.3.0"
+    "@types/gjs": "^4.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0"
   },
-  "dependencies": {
-    "electron": "36.4.0",
-    "node-cron": "4.1.0",
-    "prompt-sync": "4.2.0",
-    "request": "2.88.2"
-  }
+  "dependencies": {}
 }

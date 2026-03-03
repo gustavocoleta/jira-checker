@@ -1,73 +1,188 @@
-# <img src="assets/icons/jira.png" alt="Jira Checker" width="32" height="32"> Jira Checker
+# Jira Checker - GNOME Shell Extension
 
-Ao iniciar a aplicação, um ícone será adicionado ao System Tray, e ele irá sinalizar as situações:
+A GNOME Shell extension that monitors your assigned Jira tasks and displays them in the system tray with notifications for new tasks.
 
-> <img src="assets/icons/jira.png" alt="Nenhuma tarefa" width="12" height="12"> - Nenhuma tarefa
->
-> <img src="assets/icons/badge/1.png" alt="Nenhuma tarefa" width="12" height="12"> - Um tarefa, ou mais (o badge numerico indica a quantidade de tarefas atribuídas)
+## Features
 
-A verificação de tarefas ocorre automáticamente a cada 5 minutos, e caso existam novas tarefas, uma notificação será exibida informando a quantidade de novas tarefas.
+- 🔔 System tray indicator showing the number of assigned tasks
+- 📋 Quick access menu to view and open tasks
+- 🔄 Automatic task checking at configurable intervals
+- 📢 Desktop notifications for new tasks
+- 🔗 Direct links to tasks in your browser
+- 🎣 Optional webhook support for new task notifications
+- ⚙️ Easy configuration through GNOME Settings
 
-Ao clicar no ícone, no System Tray, serão exibidas as opções:
+## Migration from Electron Version
 
-- **Ver todas as tarefas:** abre a aplicação, no link informado na instalação (caso não tenha informado, será aberta a página "Seu Trabalho");
-- **X tarefas atribuidas:** um submenu contendo as tarefas atribuídas e as respectivas situações. Ex.: VRS-123 (Pendente). Ao clicar, a tarefa será aberta na aplicação;
-- **Página Inicial:** abre a aplicação, na página inicial do Jira;
-- **Exibir:** abre a aplicação, na última página exibida;
-- **Fechar:** encerra a aplicação
+This is a complete rewrite of the original Electron-based application as a native GNOME Shell extension. The old code has been preserved in the `.old` directory.
 
-Ao clicar no botão para fechar a janela da aplicação, a aplicação não será encerrada, e sim minimizada no System Tray.
+### Key Differences:
 
-## Setup
+- **Platform**: Native GNOME Shell instead of Electron
+- **Language**: JavaScript/TypeScript instead of Node.js
+- **Configuration**: GSettings instead of config.json
+- **Integration**: System tray instead of separate application window
+- **Performance**: Lighter memory footprint and better system integration
 
-### Pré Requisitos
+## Requirements
 
-- [Node.js 16^](https://nodejs.org/pt-br/download)
+- GNOME Shell 45 or 46
+- `glib-compile-schemas` (usually included with GNOME)
 
-### Install
+## Installation
 
-- Clone o repositório;
-- Navegue pelo terminal até a pasta do repositório e execute o comando `./start`;
-- Ao executar pela primeira vez, alguns dados de acesso serão solicitados. Siga as instruções no terminal;
+### From Source
 
-#### Desktop Icon
+1. Clone the repository:
 
-- Copiar para a pasta /usr/share/applications o arquivo `jira-checker.desktop` que está na raiz do repositório, e dar permissão de execução ao arquivo.
-  ```bash
-  sudo cp jira-checker.desktop /usr/share/applications
-  sudo chmod 775 /usr/share/applications/jira-checker.desktop
-  ```
+   ```bash
+   cd ~/GitHub/jira-checker
+   ```
 
-### Update
+2. Compile schemas:
 
-- Feche a aplicação;
-- Navegue pelo terminal até a pasta do repositório e execute o comando `git pull`;
-- Execute o comando `./start` para iniciar novamente a aplicação;
+   ```bash
+   make compile-schemas
+   ```
 
-### Start
+3. Install the extension:
 
-Para iniciar a aplicação, navegue pelo terminal até a pasta do repositório e execute: `./start`
+   ```bash
+   make install
+   ```
 
-### Configurar
+4. Restart GNOME Shell:
 
-Para editar as configurações o arquivo `config.json`, que fica na raiz do repositório, deve ser alterado.
+   - **X11**: Press `Alt+F2`, type `r`, and press Enter
+   - **Wayland**: Log out and log back in
 
-Para resetar as configurações, apague o arquivo `config.json`.
+5. Enable the extension:
+   ```bash
+   make enable
+   ```
+   Or use the GNOME Extensions app.
 
-## Útil
+### Configuration
 
-A credencial de acesso ao Jira, solicitada no primeiro start, pode ser gerada [neste link](https://id.atlassian.com/manage/api-tokens)
+1. Open GNOME Extensions app or run:
 
-## TODO
+   ```bash
+   gnome-extensions prefs jira-checker@gcoletaalves
+   ```
 
-Visualizar [aqui](https://github.com/gustavocoleta/jira-checker/issues)
+2. Configure the following settings:
+   - **Jira URL**: Your Jira instance URL (e.g., `https://company.atlassian.net`)
+   - **Email**: Your Jira account email
+   - **API Token**:
+     - Get your API token from: https://id.atlassian.com/manage/api-tokens
+     - Use the "Generate" button in preferences to create the BASE64 encoded auth
+   - **Check Interval**: How often to check for tasks (in minutes, default: 5)
+   - **Webhook URL** (optional): URL to call when new tasks are found
 
-## Erro ao iniciar
+## Usage
 
-Se apresentar o erro: `The SUID sandbox helper binary was found, but is not configured correctly. Rather than run without sandboxing I'm aborting now. You need to make sure that ... is owned by root and has mode 4755.`, Executar os comandos abaixo:
+Once installed and configured:
+
+1. The extension will appear in your system tray
+2. Click the icon to see your assigned tasks
+3. Click on any task to open it in your browser
+4. The number badge shows how many tasks are assigned to you
+5. You'll receive notifications when new tasks are assigned
+
+### Menu Options
+
+- **Task List**: Click any task key to open it in Jira
+- **Open Jira**: Opens your Jira home page
+- **Refresh**: Manually check for new tasks
+
+## Development
+
+### Project Structure
+
+```
+.
+├── extension.js           # Main extension entry point
+├── prefs.js              # Preferences UI
+├── metadata.json         # Extension metadata
+├── schemas/              # GSettings schemas
+│   └── *.gschema.xml
+├── src/                  # TypeScript source files (for reference)
+│   ├── types.ts
+│   ├── configService.ts
+│   ├── taskService.ts
+│   ├── logService.ts
+│   └── extension.ts
+├── .old/                 # Original Electron app
+└── Makefile              # Build and installation tasks
+```
+
+### Available Make Commands
+
+- `make compile-schemas` - Compile GSettings schemas
+- `make install` - Install extension to local extensions directory
+- `make uninstall` - Uninstall the extension
+- `make pack` - Create a distributable ZIP package
+- `make enable` - Enable the extension
+- `make disable` - Disable the extension
+- `make logs` - View extension logs
+- `make clean` - Remove build artifacts
+
+### Debugging
+
+View logs in real-time:
 
 ```bash
-cd node_modules/electron/dist/
-sudo chown root:root chrome-sandbox
-sudo chmod 4755 chrome-sandbox
+make logs
 ```
+
+Or manually:
+
+```bash
+journalctl -f -o cat /usr/bin/gnome-shell | grep -i jira
+```
+
+## Troubleshooting
+
+### Extension not appearing after installation
+
+1. Make sure GNOME Shell was restarted
+2. Check if the extension is enabled:
+   ```bash
+   gnome-extensions list
+   gnome-extensions enable jira-checker@gcoletaalves
+   ```
+
+### No tasks showing up
+
+1. Verify your configuration in preferences
+2. Check that your Jira URL doesn't have trailing slashes
+3. Ensure your API token is valid
+4. Check logs for errors: `make logs`
+
+### Configuration not saving
+
+1. Ensure schemas are compiled:
+   ```bash
+   make compile-schemas
+   ```
+2. Reinstall the extension:
+   ```bash
+   make uninstall
+   make install
+   ```
+
+## License
+
+ISC License
+
+## Author
+
+Gustavo Coleta (GCOLETAALVES)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Old Version
+
+The original Electron-based version is preserved in the `.old` directory for reference.

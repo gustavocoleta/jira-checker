@@ -133,3 +133,6 @@ dist
 
 # Configuration File
 config.json
+
+# Backup files of old versions of project
+.old

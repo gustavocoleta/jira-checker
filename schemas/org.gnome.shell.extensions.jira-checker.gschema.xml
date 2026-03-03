@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.jira-checker" path="/org/gnome/shell/extensions/jira-checker/">
+    <key name="jira-url" type="s">
+      <default>""</default>
+      <summary>Jira URL</summary>
+      <description>The URL of your Jira instance (e.g., https://company.atlassian.net)</description>
+    </key>
+    <key name="jira-email" type="s">
+      <default>""</default>
+      <summary>Jira Email</summary>
+      <description>Your Jira account email</description>
+    </key>
+    <key name="jira-auth" type="s">
+      <default>""</default>
+      <summary>Jira Auth Token</summary>
+      <description>Base64 encoded authentication token (email:apiToken)</description>
+    </key>
+    <key name="check-interval" type="i">
+      <default>5</default>
+      <range min="1" max="60"/>
+      <summary>Check Interval</summary>
+      <description>Minutes between task checks</description>
+    </key>
+    <key name="webhook-url" type="s">
+      <default>""</default>
+      <summary>Webhook URL</summary>
+      <description>Optional webhook URL to call when new tasks are found</description>
+    </key>
+  </schema>
+</schemalist>
