@@ -39,6 +39,22 @@ Use the installer script:
 ./install.sh
 ```
 
+### Test in an Isolated GNOME Session
+
+Run the helper script from the host terminal (outside sandboxes/containers):
+
+```bash
+bash scripts/test-isolated-session.sh
+```
+
+What it does:
+
+- Installs the extension locally (`make install`)
+- Re-enables the extension (`jira-checker@gcoletaalves`)
+- Starts a separate nested GNOME Wayland session for validation (using `--devkit`)
+
+Note: startup warnings related to `gvfs`, `doc`, or portals may appear in some environments and are often non-blocking for extension testing.
+
 ### From Source (Makefile)
 
 1. Clone the repository:
