@@ -26,7 +26,7 @@ This is a complete rewrite of the original Electron-based application as a nativ
 
 ## Requirements
 
-- GNOME Shell 45, 46, 47, 48, or 49
+- GNOME Shell 45, 46, 47, 48, 49, or 50
 - `glib-compile-schemas` (usually included with GNOME)
 
 ## Installation

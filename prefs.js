@@ -17,6 +17,7 @@
  */
 
 import Adw from 'gi://Adw';
+import GLib from 'gi://GLib';
 import Gtk from 'gi://Gtk';
 
 import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';

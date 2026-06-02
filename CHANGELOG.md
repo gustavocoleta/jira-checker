@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2026-06-02
+
+### Added
+
+- GNOME Shell 50 support (added `"50"` to `shell-version`; no API changes required)
+
+### Fixed
+
+- Missing `GLib` import in `prefs.js` that caused a `ReferenceError` when using the "Generate" auth-token button
+
 ## [2.0.0] - 2026-02-18
 
 ### Changed - Major Rewrite
