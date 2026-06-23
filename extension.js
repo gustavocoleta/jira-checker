@@ -249,9 +249,9 @@ export default class JiraCheckerExtension extends Extension {
     if (tasks.length > 0) {
       let color = '#FAFAFA';
 
-      if (tasks.length === 2) {
+      if (tasks.length > 1 && tasks.length < 4) {
         color = '#FFC107';
-      } else if (tasks.length >= 3) {
+      } else if (tasks.length >= 4) {
         color = '#F44336';
       }
 
