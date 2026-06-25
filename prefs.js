@@ -26,6 +26,8 @@ export default class JiraCheckerPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window) {
     const settings = this.getSettings();
 
+    const version = this.metadata.version ?? 'Unknown';
+
     // Create a preferences page
     const page = new Adw.PreferencesPage();
     window.add(page);
@@ -149,5 +151,33 @@ export default class JiraCheckerPreferences extends ExtensionPreferences {
       settings.set_string('webhook-url', widget.text);
     });
     webhookGroup.add(webhookRow);
+
+    // About
+    const aboutGroup = new Adw.PreferencesGroup({
+      title: 'About',
+    });
+    page.add(aboutGroup);
+
+    const versionRow = new Adw.ActionRow({
+      title: 'Version',
+      subtitle: version,
+    });
+    aboutGroup.add(versionRow);
+
+    const repoRow = new Adw.ActionRow({
+      title: 'Source Code',
+      subtitle: this.metadata.url,
+      activatable: true,
+    });
+    repoRow.add_suffix(
+      new Gtk.Image({
+        icon_name: 'external-link-symbolic',
+        valign: Gtk.Align.CENTER,
+      }),
+    );
+    repoRow.connect('activated', () => {
+      Gtk.show_uri(window, this.metadata.url, GLib.PRIORITY_DEFAULT);
+    });
+    aboutGroup.add(repoRow);
   }
 }

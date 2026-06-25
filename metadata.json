@@ -2,6 +2,7 @@
   "name": "Jira Checker",
   "description": "Check for assigned Jira tasks with system tray notification",
   "uuid": "jira-checker@gcoletaalves",
+  "version": "2.0.1",
   "shell-version": [
     "45",
     "46",
