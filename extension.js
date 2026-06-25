@@ -33,12 +33,12 @@ export default class JiraCheckerExtension extends Extension {
     this._indicator = null;
     this._timeoutId = null;
     this._lastTasks = null;
+    this._cancellable = null;
   }
 
   enable() {
     this._settings = this.getSettings();
-
-    console.log('[Jira Checker] Enabling extension');
+    this._cancellable = new Gio.Cancellable();
 
     // Create indicator
     this._indicator = new PanelMenu.Button(0, 'Jira Checker', false);
@@ -65,7 +65,10 @@ export default class JiraCheckerExtension extends Extension {
   }
 
   disable() {
-    console.log('[Jira Checker] Disabling extension');
+    if (this._cancellable) {
+      this._cancellable.cancel();
+      this._cancellable = null;
+    }
 
     if (this._timeoutId !== null) {
       GLib.Source.remove(this._timeoutId);
@@ -135,16 +138,12 @@ export default class JiraCheckerExtension extends Extension {
 
   async _checkTasks() {
     try {
-      console.log('[Jira Checker] Checking for tasks...');
-
       const config = this._getConfig();
       const tasks = await this._getTasks(config);
 
       if (tasks === null) {
         return;
       }
-
-      console.log(`[Jira Checker] Found ${tasks.length} assigned tasks`);
 
       // Update UI
       this._updateIndicator(tasks);
@@ -169,10 +168,6 @@ export default class JiraCheckerExtension extends Extension {
         const session = new Soup.Session();
         const message = Soup.Message.new('GET', url);
 
-        console.log(`[Jira Checker] Fetching tasks from: ${url}`);
-
-        console.log('[Jira Checker] Sending request to Jira API');
-
         // Set headers
         message
           .get_request_headers()
@@ -185,7 +180,7 @@ export default class JiraCheckerExtension extends Extension {
         session.send_and_read_async(
           message,
           GLib.PRIORITY_DEFAULT,
-          null,
+          this._cancellable,
           (session, result) => {
             try {
               if (message.get_status() !== 200) {
@@ -217,7 +212,8 @@ export default class JiraCheckerExtension extends Extension {
 
               resolve(tasks);
             } catch (error) {
-              console.error(`[Jira Checker] Parse error: ${error}`);
+              if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                console.error(`[Jira Checker] Parse error: ${error}`);
               resolve(null);
             }
           },
@@ -330,16 +326,11 @@ export default class JiraCheckerExtension extends Extension {
     const oldKeys = new Set(this._lastTasks.map((t) => t.key));
     const newTasks = currentTasks.filter((t) => !oldKeys.has(t.key));
 
-    console.log(`oldKeys ${JSON.stringify(oldKeys)}`);
-    console.log(`newTasks ${JSON.stringify(newTasks)}`);
-
     if (newTasks.length > 0) {
       const message =
         newTasks.length === 1
           ? `You have 1 new task: ${newTasks[0].key}`
           : `You have ${newTasks.length} new tasks`;
-
-      console.log(`[Jira Checker] New tasks found: ${message}`);
 
       Main.notify('Jira Checker', message);
 
@@ -361,11 +352,16 @@ export default class JiraCheckerExtension extends Extension {
 
   _callWebhook(url) {
     try {
-      console.log(`[Jira Checker] Calling webhook: ${url}`);
-
       const session = new Soup.Session();
       const message = Soup.Message.new('GET', url);
-      session.send_async(message, 0, null, null);
+      session.send_async(message, GLib.PRIORITY_DEFAULT, this._cancellable, (session, result) => {
+        try {
+          session.send_finish(result);
+        } catch (error) {
+          if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+            console.error(`[Jira Checker] Webhook error: ${error}`);
+        }
+      });
     } catch (error) {
       console.error(`[Jira Checker] Failed to call webhook: ${error}`);
     }

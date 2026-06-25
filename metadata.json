@@ -10,7 +10,6 @@
     "49",
     "50"
   ],
-  "version": 1,
   "url": "https://github.com/gcoletaalves/jira-checker",
   "settings-schema": "org.gnome.shell.extensions.jira-checker"
 }

@@ -79,44 +79,29 @@ export default class JiraCheckerPreferences extends ExtensionPreferences {
     });
     generateButton.connect('clicked', () => {
       const email = settings.get_string('jira-email');
-      const dialog = new Gtk.Dialog({
-        title: 'Generate Auth Token',
-        transient_for: window,
-        modal: true,
+
+      const apiTokenEntry = new Adw.EntryRow({
+        title: 'API Token',
+        show_apply_button: false,
       });
 
-      const contentArea = dialog.get_content_area();
-      const box = new Gtk.Box({
-        orientation: Gtk.Orientation.VERTICAL,
-        spacing: 10,
-        margin_top: 10,
-        margin_bottom: 10,
-        margin_start: 10,
-        margin_end: 10,
+      const body = new Adw.PreferencesGroup();
+      body.add(apiTokenEntry);
+
+      const dialog = new Adw.AlertDialog({
+        heading: 'Generate Auth Token',
+        body: 'Get your API token from:\nhttps://id.atlassian.com/manage/api-tokens',
+        extra_child: body,
       });
+      dialog.add_response('cancel', 'Cancel');
+      dialog.add_response('generate', 'Generate');
+      dialog.set_response_appearance('generate', Adw.ResponseAppearance.SUGGESTED);
+      dialog.set_default_response('generate');
+      dialog.set_close_response('cancel');
 
-      box.append(
-        new Gtk.Label({
-          label:
-            'Get your API token from: https://id.atlassian.com/manage/api-tokens',
-          wrap: true,
-        }),
-      );
-
-      const apiTokenEntry = new Gtk.Entry({
-        placeholder_text: 'Paste your API token here',
-        hexpand: true,
-      });
-      box.append(apiTokenEntry);
-
-      contentArea.append(box);
-
-      dialog.add_button('Cancel', Gtk.ResponseType.CANCEL);
-      dialog.add_button('Generate', Gtk.ResponseType.OK);
-
-      dialog.connect('response', (dialog, response) => {
-        if (response === Gtk.ResponseType.OK) {
-          const apiToken = apiTokenEntry.get_text();
+      dialog.connect('response', (_dialog, response) => {
+        if (response === 'generate') {
+          const apiToken = apiTokenEntry.text;
           if (email && apiToken) {
             const authString = `${email}:${apiToken}`;
             const encoded = GLib.base64_encode(
@@ -126,10 +111,9 @@ export default class JiraCheckerPreferences extends ExtensionPreferences {
             tokenEntry.set_text(encoded);
           }
         }
-        dialog.destroy();
       });
 
-      dialog.show();
+      dialog.present(window);
     });
     tokenRow.add_suffix(generateButton);
     group.add(tokenRow);
