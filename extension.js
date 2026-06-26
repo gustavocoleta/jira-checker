@@ -18,6 +18,7 @@
 
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as ModalDialog from 'resource:///org/gnome/shell/ui/modalDialog.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
@@ -304,11 +305,18 @@ export default class JiraCheckerExtension extends Extension {
     }
 
     // Open Jira button
-    const openJiraItem = new PopupMenu.PopupMenuItem('Open Jira');
+    const openJiraItem = new PopupMenu.PopupMenuItem('Browse Jira');
     openJiraItem.connect('activate', () => {
       this._openUrl(config.url);
     });
     this._indicator.menu.addMenuItem(openJiraItem);
+
+    // Open Task button
+    const openTaskItem = new PopupMenu.PopupMenuItem('Jump to Task…');
+    openTaskItem.connect('activate', () => {
+      this._openTaskDialog();
+    });
+    this._indicator.menu.addMenuItem(openTaskItem);
 
     // Refresh button
     const refreshItem = new PopupMenu.PopupMenuItem('Refresh');
@@ -340,6 +348,61 @@ export default class JiraCheckerExtension extends Extension {
         this._callWebhook(config.webhookUrl);
       }
     }
+  }
+
+  _openTaskDialog() {
+    const config = this._getConfig();
+
+    const dialog = new ModalDialog.ModalDialog({ destroyOnClose: true });
+
+    const label = new St.Label({
+      text: 'Enter the Jira Task ID:',
+      style: 'margin-bottom: 8px;',
+    });
+    dialog.contentLayout.add_child(label);
+
+    const entry = new St.Entry({
+      hint_text: 'e.g. ARQ-100',
+      can_focus: true,
+      x_expand: true,
+    });
+    dialog.contentLayout.add_child(entry);
+
+    const confirm = () => {
+      const taskId = entry.get_text().trim();
+      if (taskId) this._openUrl(`${config.url}/browse/${taskId}`);
+      dialog.close();
+    };
+
+    const clutterText = entry.get_clutter_text();
+
+    clutterText.connect('text-changed', () => {
+      const text = clutterText.get_text();
+      const upper = text.toUpperCase();
+      if (text !== upper) {
+        const pos = clutterText.get_cursor_position();
+        clutterText.set_text(upper);
+        clutterText.set_cursor_position(pos);
+      }
+    });
+
+    clutterText.connect('activate', () => confirm());
+
+    dialog.setButtons([
+      {
+        label: 'Cancel',
+        action: () => dialog.close(),
+        key: Clutter.KEY_Escape,
+      },
+      {
+        label: 'Ok',
+        action: confirm,
+        default: true,
+      },
+    ]);
+
+    dialog.open();
+    entry.grab_key_focus();
   }
 
   _openUrl(url) {
