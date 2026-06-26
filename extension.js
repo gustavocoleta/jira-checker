@@ -16,6 +16,8 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+const DEBUG = false;
+
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as ModalDialog from 'resource:///org/gnome/shell/ui/modalDialog.js';
@@ -58,7 +60,7 @@ export default class JiraCheckerExtension extends Extension {
     // Start checking tasks if configured
     if (this._isConfigured()) {
       this._startTaskCheck();
-    } else {
+    } else if (DEBUG) {
       console.warn(
         '[Jira Checker] Extension not configured. Please set Jira credentials in preferences.',
       );
@@ -155,7 +157,7 @@ export default class JiraCheckerExtension extends Extension {
 
       this._lastTasks = tasks;
     } catch (error) {
-      console.error(`[Jira Checker] Error checking tasks: ${error}`);
+      if (DEBUG) console.error(`[Jira Checker] Error checking tasks: ${error}`);
     }
   }
 
@@ -185,7 +187,7 @@ export default class JiraCheckerExtension extends Extension {
           (session, result) => {
             try {
               if (message.get_status() !== 200) {
-                console.error(
+                if (DEBUG) console.error(
                   `[Jira Checker] HTTP error: ${message.get_status()}`,
                 );
                 resolve(null);
@@ -199,7 +201,7 @@ export default class JiraCheckerExtension extends Extension {
               const data = JSON.parse(response);
 
               if (data.errorMessages) {
-                console.error(
+                if (DEBUG) console.error(
                   `[Jira Checker] ${data.errorMessages.join(', ')}`,
                 );
                 resolve(null);
@@ -213,14 +215,14 @@ export default class JiraCheckerExtension extends Extension {
 
               resolve(tasks);
             } catch (error) {
-              if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+              if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED) && DEBUG)
                 console.error(`[Jira Checker] Parse error: ${error}`);
               resolve(null);
             }
           },
         );
       } catch (error) {
-        console.error(`[Jira Checker] Request error: ${error}`);
+        if (DEBUG) console.error(`[Jira Checker] Request error: ${error}`);
         resolve(null);
       }
     });
@@ -376,7 +378,7 @@ export default class JiraCheckerExtension extends Extension {
 
     const clutterText = entry.get_clutter_text();
 
-    clutterText.connect('text-changed', () => {
+    const textChangedId = clutterText.connect('text-changed', () => {
       const text = clutterText.get_text();
       const upper = text.toUpperCase();
       if (text !== upper) {
@@ -386,7 +388,12 @@ export default class JiraCheckerExtension extends Extension {
       }
     });
 
-    clutterText.connect('activate', () => confirm());
+    const activateId = clutterText.connect('activate', () => confirm());
+
+    dialog.connect('destroy', () => {
+      clutterText.disconnect(textChangedId);
+      clutterText.disconnect(activateId);
+    });
 
     dialog.setButtons([
       {
@@ -409,7 +416,7 @@ export default class JiraCheckerExtension extends Extension {
     try {
       Gio.AppInfo.launch_default_for_uri(url, null);
     } catch (error) {
-      console.error(`[Jira Checker] Failed to open URL: ${error}`);
+      if (DEBUG) console.error(`[Jira Checker] Failed to open URL: ${error}`);
     }
   }
 
@@ -421,12 +428,12 @@ export default class JiraCheckerExtension extends Extension {
         try {
           session.send_finish(result);
         } catch (error) {
-          if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+          if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED) && DEBUG)
             console.error(`[Jira Checker] Webhook error: ${error}`);
         }
       });
     } catch (error) {
-      console.error(`[Jira Checker] Failed to call webhook: ${error}`);
+      if (DEBUG) console.error(`[Jira Checker] Failed to call webhook: ${error}`);
     }
   }
 }

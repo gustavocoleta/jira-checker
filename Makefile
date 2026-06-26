@@ -39,13 +39,13 @@ uninstall:
 	@echo "Extension uninstalled."
 
 # Create a distributable package
-pack: compile-schemas
+pack:
 	@echo "Creating package..."
 	@mkdir -p $(BUILD_DIR)
 	@cp $(FILES) $(BUILD_DIR)/
 	@mkdir -p $(BUILD_DIR)/schemas
 	@mkdir -p $(BUILD_DIR)/assets/icons
-	@cp -r schemas/* $(BUILD_DIR)/schemas/
+	@cp schemas/*.xml $(BUILD_DIR)/schemas/
 	@cp -r assets/icons/* $(BUILD_DIR)/assets/icons/
 	@cd $(BUILD_DIR) && zip -r ../$(EXTENSION_UUID).zip .
 	@rm -rf $(BUILD_DIR)

@@ -136,3 +136,7 @@ config.json
 
 # Backup files of old versions of project
 .old
+
+# GNOME Extension build artifacts
+schemas/gschemas.compiled
+*.shell-extension.zip
