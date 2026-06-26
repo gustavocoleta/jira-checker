@@ -2,7 +2,7 @@
   "name": "Jira Checker",
   "description": "Check for assigned Jira tasks with system tray notification",
   "uuid": "jira-checker@gustavocoleta",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "shell-version": [
     "45",
     "46",

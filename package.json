@@ -1,6 +1,6 @@
 {
   "name": "jira-checker-gnome-extension",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "GNOME Shell extension for checking assigned Jira tasks",
   "main": "extension.js",
   "scripts": {
