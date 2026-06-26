@@ -1,160 +1,211 @@
-# Jira Checker - GNOME Shell Extension
+# Jira Checker — GNOME Shell Extension
 
-A GNOME Shell extension that monitors your assigned Jira tasks and displays them in the system tray with notifications for new tasks.
+A GNOME Shell extension that monitors your assigned Jira tasks and displays them in the system tray with desktop notifications for new assignments.
 
 ## Features
 
-- 🔔 System tray indicator showing the number of assigned tasks
-- 📋 Quick access menu to view and open tasks
-- 🔄 Automatic task checking at configurable intervals
-- 📢 Desktop notifications for new tasks
-- 🔗 Direct links to tasks in your browser
-- 🎣 Optional webhook support for new task notifications
-- ⚙️ Easy configuration through GNOME Settings
-
-## Migration from Electron Version
-
-This is a complete rewrite of the original Electron-based application as a native GNOME Shell extension. The old code has been preserved in the `.old` directory.
-
-### Key Differences:
-
-- **Platform**: Native GNOME Shell instead of Electron
-- **Language**: JavaScript/TypeScript instead of Node.js
-- **Configuration**: GSettings instead of config.json
-- **Integration**: System tray instead of separate application window
-- **Performance**: Lighter memory footprint and better system integration
+- **Color-coded tray badge** — dot color reflects workload at a glance:
+  - White dot: 1 task assigned
+  - Yellow dot: 2–3 tasks assigned
+  - Red dot: 4 or more tasks assigned
+  - No dot: nothing assigned
+- **Task list in panel menu** — see all assigned tasks without leaving the desktop
+- **One-click task navigation** — click any task key to open it in your browser
+- **Jump to Task dialog** — type any task ID to open it directly, with auto-uppercase input
+- **Browse Jira** — shortcut to your Jira home page from the panel menu
+- **Desktop notifications** — notified when new tasks are assigned between checks
+- **Configurable check interval** — 1 to 60 minutes (default: 5)
+- **Webhook support** — optional HTTP call when new tasks arrive
+- **Inline auth token generator** — generate the Base64 auth token inside preferences without leaving GNOME Settings
 
 ## Requirements
 
 - GNOME Shell 45, 46, 47, 48, 49, or 50
-- `glib-compile-schemas` (usually included with GNOME)
+- `glib-compile-schemas` (included with most GNOME installations)
 
 ## Installation
 
-### Quick Install
+### From GNOME Extensions website
 
-Use the installer script:
+Install directly from [extensions.gnome.org](https://extensions.gnome.org) and skip to [Configuration](#configuration).
+
+### Quick install from source
 
 ```bash
+git clone https://github.com/gustavocoleta/jira-checker
+cd jira-checker
 ./install.sh
 ```
 
-### Test in an Isolated GNOME Session
-
-Run the helper script from the host terminal (outside sandboxes/containers):
-
-```bash
-bash scripts/test-isolated-session.sh
-```
-
-What it does:
-
-- Installs the extension locally (`make install`)
-- Re-enables the extension (`jira-checker@gcoletaalves`)
-- Starts a separate nested GNOME Wayland session for validation (using `--devkit`)
-
-Note: startup warnings related to `gvfs`, `doc`, or portals may appear in some environments and are often non-blocking for extension testing.
-
-### From Source (Makefile)
+### From source with Make
 
 1. Clone the repository:
 
    ```bash
-   cd ~/GitHub/jira-checker
+   git clone https://github.com/gustavocoleta/jira-checker
+   cd jira-checker
    ```
 
-2. Compile schemas:
-
-   ```bash
-   make compile-schemas
-   ```
-
-3. Install the extension:
+2. Install the extension:
 
    ```bash
    make install
    ```
 
-4. Restart GNOME Shell:
-   - **X11**: Press `Alt+F2`, type `r`, and press Enter
+3. Restart GNOME Shell:
+   - **X11**: Press `Alt+F2`, type `r`, press Enter
    - **Wayland**: Log out and log back in
 
-5. Enable the extension:
+4. Enable the extension:
+
    ```bash
    make enable
    ```
+
    Or use the GNOME Extensions app.
 
-### Configuration
+## Configuration
 
-1. Open GNOME Extensions app or run:
+Open the extension preferences:
 
-   ```bash
-   gnome-extensions prefs jira-checker@gcoletaalves
-   ```
+```bash
+gnome-extensions prefs jira-checker@gustavocoleta
+```
 
-2. Configure the following settings:
-   - **Jira URL**: Your Jira instance URL (e.g., `https://company.atlassian.net`)
-   - **Email**: Your Jira account email
-   - **API Token**:
-     - Get your API token from: https://id.atlassian.com/manage/api-tokens
-     - Use the "Generate" button in preferences to create the BASE64 encoded auth
-   - **Check Interval**: How often to check for tasks (in minutes, default: 5)
-   - **Webhook URL** (optional): URL to call when new tasks are found
+Or open **GNOME Settings → Extensions → Jira Checker → Settings**.
+
+### Jira Configuration
+
+| Setting            | Description                                                  |
+| ------------------ | ------------------------------------------------------------ |
+| **Jira URL**       | Your Jira instance URL, e.g. `https://company.atlassian.net` |
+| **Email**          | The email address of your Jira account                       |
+| **API Token**      | Base64-encoded `email:token` credential (see below)          |
+| **Check Interval** | How often to poll for tasks, in minutes (1–60)               |
+
+### Generating the API token
+
+1. Get your Atlassian API token at [id.atlassian.com/manage/api-tokens](https://id.atlassian.com/manage/api-tokens)
+2. In preferences, fill in **Email**, then click **Generate** next to the API Token field
+3. Paste your API token in the dialog — the extension encodes `email:token` to Base64 and saves it automatically
+
+Alternatively, encode it manually:
+
+```bash
+echo -n "your@email.com:your-api-token" | base64
+```
+
+### Advanced
+
+| Setting         | Description                                                  |
+| --------------- | ------------------------------------------------------------ |
+| **Webhook URL** | Optional URL called via HTTP GET when new tasks are assigned |
 
 ## Usage
 
-Once installed and configured:
+Once installed and configured, the Jira icon appears in the top panel.
 
-1. The extension will appear in your system tray
-2. Click the icon to see your assigned tasks
-3. Click on any task to open it in your browser
-4. The number badge shows how many tasks are assigned to you
-5. You'll receive notifications when new tasks are assigned
+### Panel icon
 
-### Menu Options
+The dot badge on the icon indicates your task load:
 
-- **Task List**: Click any task key to open it in Jira
-- **Open Jira**: Opens your Jira home page
-- **Refresh**: Manually check for new tasks
+- **No dot** — no assigned tasks
+- **White dot** — 1 task
+- **Yellow dot** — 2 to 3 tasks
+- **Red dot** — 4 or more tasks
+
+### Menu
+
+| Item                     | Action                                       |
+| ------------------------ | -------------------------------------------- |
+| Task count header        | Shows how many tasks are currently assigned  |
+| `KEY-123` (task entries) | Opens that task in your browser              |
+| **Browse Jira**          | Opens your Jira home page in the browser     |
+| **Jump to Task…**        | Opens a dialog to navigate to any task by ID |
+| **Refresh**              | Manually triggers a task check immediately   |
+
+### Jump to Task
+
+Click **Jump to Task…** in the panel menu to open a dialog. Type a task ID (e.g. `ARQ-100`) and press Enter or click **Ok**. Input is automatically uppercased. Press Escape to dismiss.
 
 ## Development
 
-### Project Structure
+### Project structure
 
 ```
 .
-├── extension.js           # Main extension entry point
-├── prefs.js              # Preferences UI
-├── metadata.json         # Extension metadata
-├── install.sh            # Quick installer script
-├── schemas/              # GSettings schemas
-│   └── *.gschema.xml
-├── assets/icons/         # Panel icon assets
-├── .old/                 # Original Electron app
-└── Makefile              # Build and installation tasks
+├── extension.js              # Main extension — panel icon, menu, Jira API, notifications
+├── prefs.js                  # Preferences window (Adwaita)
+├── metadata.json             # Extension metadata and supported GNOME versions
+├── install.sh                # Quick installer script
+├── Makefile                  # Build and installation tasks
+├── schemas/
+│   └── *.gschema.xml         # GSettings schema (jira-url, jira-email, jira-auth, etc.)
+├── assets/icons/
+│   └── jira-novo.svg         # Panel icon
+├── scripts/
+│   ├── upgrade-version.sh    # Bump version in metadata.json and package.json
+│   └── test-isolated-session.sh  # Launch a nested Wayland session for testing
+└── .github/workflows/
+    └── release.yml           # Release automation workflow
 ```
 
-### Available Make Commands
+### Make commands
 
-- `make compile-schemas` - Compile GSettings schemas
-- `make install` - Install extension to local extensions directory
-- `make uninstall` - Uninstall the extension
-- `make pack` - Create a distributable ZIP package
-- `make enable` - Enable the extension
-- `make disable` - Disable the extension
-- `make logs` - View extension logs
-- `make clean` - Remove build artifacts
+| Command                | Description                                                   |
+| ---------------------- | ------------------------------------------------------------- |
+| `make compile-schemas` | Compile GSettings XML schemas to binary                       |
+| `make install`         | Install extension to `~/.local/share/gnome-shell/extensions/` |
+| `make uninstall`       | Remove the extension from the local directory                 |
+| `make pack`            | Create `jira-checker@gustavocoleta.zip` for distribution      |
+| `make enable`          | Enable the extension via `gnome-extensions`                   |
+| `make disable`         | Disable the extension                                         |
+| `make logs`            | Stream extension logs from `journalctl`                       |
+| `make clean`           | Remove build artifacts and the ZIP file                       |
+
+### Releasing a new version
+
+The release workflow is automated via GitHub Actions. Go to **Actions → Release Extension → Run workflow** and choose the bump type:
+
+- `patch` — bug fixes (e.g. `2.1.0 → 2.1.1`)
+- `minor` — new features (e.g. `2.1.0 → 2.2.0`)
+- `major` — breaking changes (e.g. `2.1.0 → 3.0.0`)
+
+The workflow will:
+
+1. Bump the version in `metadata.json` and `package.json`
+2. Compile schemas and create the extension ZIP
+3. Commit and push the version bump
+4. Create and push a git tag (e.g. `v2.2.0`)
+5. Publish a GitHub Release with the ZIP attached
+
+To publish to GNOME Extensions, download the ZIP from the GitHub Release and upload it at [extensions.gnome.org/upload](https://extensions.gnome.org/upload/).
+
+To bump the version locally without releasing:
+
+```bash
+./scripts/upgrade-version.sh -patch   # or -minor / -major
+```
+
+### Testing in an isolated GNOME session
+
+Run from the host terminal (not inside a container or sandbox):
+
+```bash
+bash scripts/test-isolated-session.sh
+```
+
+This installs the extension locally, enables it, and launches a nested Wayland GNOME Shell session using `--devkit`. Warnings related to `gvfs`, `doc`, or portals are expected in some environments and do not affect extension functionality.
 
 ### Debugging
 
-View logs in real-time:
+Stream extension logs live:
 
 ```bash
 make logs
 ```
 
-Or manually:
+Or directly:
 
 ```bash
 journalctl -f -o cat /usr/bin/gnome-shell | grep -i jira
@@ -164,44 +215,35 @@ journalctl -f -o cat /usr/bin/gnome-shell | grep -i jira
 
 ### Extension not appearing after installation
 
-1. Make sure GNOME Shell was restarted
-2. Check if the extension is enabled:
+1. Ensure GNOME Shell was restarted after installation
+2. Check whether the extension is enabled:
    ```bash
    gnome-extensions list
-   gnome-extensions enable jira-checker@gcoletaalves
+   gnome-extensions enable jira-checker@gustavocoleta
    ```
 
-### No tasks showing up
+### No tasks appearing
 
-1. Verify your configuration in preferences
-2. Check that your Jira URL doesn't have trailing slashes
-3. Ensure your API token is valid
-4. Check logs for errors: `make logs`
+1. Open preferences and verify Jira URL, email, and API token
+2. Confirm the URL has no trailing slash
+3. Confirm the API token is valid and not expired
+4. Check logs for error details: `make logs`
 
 ### Configuration not saving
 
-1. Ensure schemas are compiled:
+1. Recompile the schemas:
    ```bash
    make compile-schemas
    ```
-2. Reinstall the extension:
+2. Reinstall:
    ```bash
-   make uninstall
-   make install
+   make uninstall && make install
    ```
 
 ## License
 
-ISC License
+GPL-2.0-or-later
 
 ## Author
 
-Gustavo Coleta (GCOLETAALVES)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Old Version
-
-The original Electron-based version is preserved in the `.old` directory for reference.
+Gustavo Coleta ([gustavocoleta](https://github.com/gustavocoleta))

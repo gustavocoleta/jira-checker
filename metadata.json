@@ -1,8 +1,8 @@
 {
   "name": "Jira Checker",
   "description": "Check for assigned Jira tasks with system tray notification",
-  "uuid": "jira-checker@gcoletaalves",
-  "version": "2.1.0",
+  "uuid": "jira-checker@gustavocoleta",
+  "version": "0.1.0",
   "shell-version": [
     "45",
     "46",
@@ -11,6 +11,6 @@
     "49",
     "50"
   ],
-  "url": "https://github.com/gcoletaalves/jira-checker",
+  "url": "https://github.com/gustavocoleta/jira-checker",
   "settings-schema": "org.gnome.shell.extensions.jira-checker"
 }

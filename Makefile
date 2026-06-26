@@ -1,6 +1,6 @@
 # Makefile for Jira Checker GNOME Extension
 
-EXTENSION_UUID = jira-checker@gcoletaalves
+EXTENSION_UUID = jira-checker@gustavocoleta
 EXTENSION_DIR = $(HOME)/.local/share/gnome-shell/extensions/$(EXTENSION_UUID)
 BUILD_DIR = build
 

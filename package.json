@@ -1,15 +1,15 @@
 {
   "name": "jira-checker-gnome-extension",
-  "version": "2.1.0",
+  "version": "0.1.0",
   "description": "GNOME Shell extension for checking assigned Jira tasks",
   "main": "extension.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "install-extension": "npm run build && ln -sf $PWD ~/.local/share/gnome-shell/extensions/jira-checker@gcoletaalves",
+    "install-extension": "npm run build && ln -sf $PWD ~/.local/share/gnome-shell/extensions/jira-checker@gustavocoleta",
     "compile-schemas": "glib-compile-schemas schemas/"
   },
-  "author": "Gustavo Coleta (GCOLETAALVES)",
+  "author": "Gustavo Coleta (gustavocoleta)",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.0.0",

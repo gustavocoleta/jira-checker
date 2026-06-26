@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-EXTENSION_UUID="jira-checker@gcoletaalves"
+EXTENSION_UUID="jira-checker@gustavocoleta"
 WAYLAND_DISPLAY_NAME="wayland-jira-test"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

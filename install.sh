@@ -3,7 +3,7 @@
 
 set -e
 
-EXTENSION_UUID="jira-checker@gcoletaalves"
+EXTENSION_UUID="jira-checker@gustavocoleta"
 EXTENSION_DIR="$HOME/.local/share/gnome-shell/extensions/$EXTENSION_UUID"
 
 echo "Installing Jira Checker GNOME Extension..."
