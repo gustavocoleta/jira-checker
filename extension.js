@@ -105,12 +105,7 @@ export default class JiraCheckerExtension extends Extension {
   }
 
   _createPanelIcon() {
-    const iconPath = GLib.build_filenamev([
-      this.path,
-      'assets',
-      'icons',
-      'jira-novo.svg',
-    ]);
+    const iconPath = GLib.build_filenamev([this.path, 'icon.svg']);
     const file = Gio.File.new_for_path(iconPath);
     const gicon = new Gio.FileIcon({ file });
 
@@ -187,9 +182,10 @@ export default class JiraCheckerExtension extends Extension {
           (session, result) => {
             try {
               if (message.get_status() !== 200) {
-                if (DEBUG) console.error(
-                  `[Jira Checker] HTTP error: ${message.get_status()}`,
-                );
+                if (DEBUG)
+                  console.error(
+                    `[Jira Checker] HTTP error: ${message.get_status()}`,
+                  );
                 resolve(null);
                 return;
               }
@@ -201,9 +197,10 @@ export default class JiraCheckerExtension extends Extension {
               const data = JSON.parse(response);
 
               if (data.errorMessages) {
-                if (DEBUG) console.error(
-                  `[Jira Checker] ${data.errorMessages.join(', ')}`,
-                );
+                if (DEBUG)
+                  console.error(
+                    `[Jira Checker] ${data.errorMessages.join(', ')}`,
+                  );
                 resolve(null);
                 return;
               }
@@ -215,7 +212,10 @@ export default class JiraCheckerExtension extends Extension {
 
               resolve(tasks);
             } catch (error) {
-              if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED) && DEBUG)
+              if (
+                !error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED) &&
+                DEBUG
+              )
                 console.error(`[Jira Checker] Parse error: ${error}`);
               resolve(null);
             }
@@ -405,6 +405,7 @@ export default class JiraCheckerExtension extends Extension {
         label: 'Ok',
         action: confirm,
         default: true,
+        key: Clutter.KEY_Return,
       },
     ]);
 
@@ -424,16 +425,25 @@ export default class JiraCheckerExtension extends Extension {
     try {
       const session = new Soup.Session();
       const message = Soup.Message.new('GET', url);
-      session.send_async(message, GLib.PRIORITY_DEFAULT, this._cancellable, (session, result) => {
-        try {
-          session.send_finish(result);
-        } catch (error) {
-          if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED) && DEBUG)
-            console.error(`[Jira Checker] Webhook error: ${error}`);
-        }
-      });
+      session.send_async(
+        message,
+        GLib.PRIORITY_DEFAULT,
+        this._cancellable,
+        (session, result) => {
+          try {
+            session.send_finish(result);
+          } catch (error) {
+            if (
+              !error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED) &&
+              DEBUG
+            )
+              console.error(`[Jira Checker] Webhook error: ${error}`);
+          }
+        },
+      );
     } catch (error) {
-      if (DEBUG) console.error(`[Jira Checker] Failed to call webhook: ${error}`);
+      if (DEBUG)
+        console.error(`[Jira Checker] Failed to call webhook: ${error}`);
     }
   }
 }

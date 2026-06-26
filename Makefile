@@ -5,7 +5,7 @@ EXTENSION_DIR = $(HOME)/.local/share/gnome-shell/extensions/$(EXTENSION_UUID)
 BUILD_DIR = build
 
 # Files to include in the extension
-FILES = extension.js prefs.js metadata.json
+FILES = extension.js prefs.js metadata.json icon.svg
 SCHEMAS = schemas/org.gnome.shell.extensions.jira-checker.gschema.xml
 
 .PHONY: all clean install uninstall pack compile-schemas
@@ -22,10 +22,8 @@ install: compile-schemas
 	@echo "Installing extension to $(EXTENSION_DIR)..."
 	@mkdir -p $(EXTENSION_DIR)
 	@mkdir -p $(EXTENSION_DIR)/schemas
-	@mkdir -p $(EXTENSION_DIR)/assets/icons
 	@cp $(FILES) $(EXTENSION_DIR)/
 	@cp -r schemas/* $(EXTENSION_DIR)/schemas/
-	@cp -r assets/icons/* $(EXTENSION_DIR)/assets/icons/
 	@echo "Installation complete. Please restart GNOME Shell:"
 	@echo "  - On X11: Press Alt+F2, type 'r', and press Enter"
 	@echo "  - On Wayland: Log out and log back in"
@@ -44,9 +42,7 @@ pack:
 	@mkdir -p $(BUILD_DIR)
 	@cp $(FILES) $(BUILD_DIR)/
 	@mkdir -p $(BUILD_DIR)/schemas
-	@mkdir -p $(BUILD_DIR)/assets/icons
 	@cp schemas/*.xml $(BUILD_DIR)/schemas/
-	@cp -r assets/icons/* $(BUILD_DIR)/assets/icons/
 	@cd $(BUILD_DIR) && zip -r ../$(EXTENSION_UUID).zip .
 	@rm -rf $(BUILD_DIR)
 	@echo "Package created: $(EXTENSION_UUID).zip"

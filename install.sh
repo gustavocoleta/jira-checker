@@ -21,15 +21,11 @@ glib-compile-schemas schemas/
 # Create extension directory
 echo "Creating extension directory..."
 mkdir -p "$EXTENSION_DIR/schemas"
-mkdir -p "$EXTENSION_DIR/assets/icons"
 
 # Copy files
 echo "Copying extension files..."
-cp extension.js "$EXTENSION_DIR/"
-cp prefs.js "$EXTENSION_DIR/"
-cp metadata.json "$EXTENSION_DIR/"
+cp extension.js prefs.js metadata.json icon.svg "$EXTENSION_DIR/"
 cp -r schemas/* "$EXTENSION_DIR/schemas/"
-cp -r assets/icons/* "$EXTENSION_DIR/assets/icons/"
 
 echo ""
 echo "Installation complete!"

@@ -12,5 +12,6 @@
     "50"
   ],
   "url": "https://github.com/gustavocoleta/jira-checker",
-  "settings-schema": "org.gnome.shell.extensions.jira-checker"
+  "settings-schema": "org.gnome.shell.extensions.jira-checker",
+  "icon": "icon.svg"
 }

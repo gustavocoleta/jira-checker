@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="icon.svg" width="64" height="64" alt="Jira Checker icon">
+</p>
+
 # Jira Checker — GNOME Shell Extension
 
 A GNOME Shell extension that monitors your assigned Jira tasks and displays them in the system tray with desktop notifications for new assignments.
@@ -141,8 +145,7 @@ Click **Jump to Task…** in the panel menu to open a dialog. Type a task ID (e.
 ├── Makefile                  # Build and installation tasks
 ├── schemas/
 │   └── *.gschema.xml         # GSettings schema (jira-url, jira-email, jira-auth, etc.)
-├── assets/icons/
-│   └── jira-novo.svg         # Panel icon
+├── icon.svg                  # Extension icon (panel + Extensions app + README)
 ├── scripts/
 │   ├── upgrade-version.sh    # Bump version in metadata.json and package.json
 │   └── test-isolated-session.sh  # Launch a nested Wayland session for testing
