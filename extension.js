@@ -37,6 +37,8 @@ export default class JiraCheckerExtension extends Extension {
     this._timeoutId = null;
     this._lastTasks = null;
     this._cancellable = null;
+    this._taskDialog = null;
+    this._taskClutterText = null;
   }
 
   enable() {
@@ -76,6 +78,17 @@ export default class JiraCheckerExtension extends Extension {
     if (this._timeoutId !== null) {
       GLib.Source.remove(this._timeoutId);
       this._timeoutId = null;
+    }
+
+    if (this._taskClutterText) {
+      this._taskClutterText.disconnectObject(this);
+      this._taskClutterText = null;
+    }
+
+    if (this._taskDialog) {
+      this._taskDialog.disconnectObject(this);
+      this._taskDialog.close();
+      this._taskDialog = null;
     }
 
     if (this._indicator) {
@@ -299,7 +312,7 @@ export default class JiraCheckerExtension extends Extension {
         const item = new PopupMenu.PopupMenuItem(task.key);
         item.connectObject('activate', () => {
           this._openUrl(`${config.url}/browse/${task.key}`);
-        }, item);
+        }, this);
         this._indicator.menu.addMenuItem(item);
       });
 
@@ -310,21 +323,21 @@ export default class JiraCheckerExtension extends Extension {
     const openJiraItem = new PopupMenu.PopupMenuItem('Browse Jira');
     openJiraItem.connectObject('activate', () => {
       this._openUrl(config.url);
-    }, openJiraItem);
+    }, this);
     this._indicator.menu.addMenuItem(openJiraItem);
 
     // Open Task button
     const openTaskItem = new PopupMenu.PopupMenuItem('Jump to Task…');
     openTaskItem.connectObject('activate', () => {
       this._openTaskDialog();
-    }, openTaskItem);
+    }, this);
     this._indicator.menu.addMenuItem(openTaskItem);
 
     // Refresh button
     const refreshItem = new PopupMenu.PopupMenuItem('Refresh');
     refreshItem.connectObject('activate', () => {
       this._checkTasks();
-    }, refreshItem);
+    }, this);
     this._indicator.menu.addMenuItem(refreshItem);
   }
 
@@ -356,6 +369,7 @@ export default class JiraCheckerExtension extends Extension {
     const config = this._getConfig();
 
     const dialog = new ModalDialog.ModalDialog({ destroyOnClose: true });
+    this._taskDialog = dialog;
 
     const label = new St.Label({
       text: 'Enter the Jira Task ID:',
@@ -377,6 +391,7 @@ export default class JiraCheckerExtension extends Extension {
     };
 
     const clutterText = entry.get_clutter_text();
+    this._taskClutterText = clutterText;
 
     clutterText.connectObject(
       'text-changed', () => {
@@ -389,8 +404,13 @@ export default class JiraCheckerExtension extends Extension {
         }
       },
       'activate', () => confirm(),
-      dialog
+      this
     );
+
+    dialog.connectObject('destroy', () => {
+      this._taskDialog = null;
+      this._taskClutterText = null;
+    }, this);
 
     dialog.setButtons([
       {
