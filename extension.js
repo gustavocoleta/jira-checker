@@ -297,9 +297,9 @@ export default class JiraCheckerExtension extends Extension {
     if (tasks.length > 0) {
       tasks.forEach((task) => {
         const item = new PopupMenu.PopupMenuItem(task.key);
-        item.connect('activate', () => {
+        item.connectObject('activate', () => {
           this._openUrl(`${config.url}/browse/${task.key}`);
-        });
+        }, item);
         this._indicator.menu.addMenuItem(item);
       });
 
@@ -308,23 +308,23 @@ export default class JiraCheckerExtension extends Extension {
 
     // Open Jira button
     const openJiraItem = new PopupMenu.PopupMenuItem('Browse Jira');
-    openJiraItem.connect('activate', () => {
+    openJiraItem.connectObject('activate', () => {
       this._openUrl(config.url);
-    });
+    }, openJiraItem);
     this._indicator.menu.addMenuItem(openJiraItem);
 
     // Open Task button
     const openTaskItem = new PopupMenu.PopupMenuItem('Jump to Task…');
-    openTaskItem.connect('activate', () => {
+    openTaskItem.connectObject('activate', () => {
       this._openTaskDialog();
-    });
+    }, openTaskItem);
     this._indicator.menu.addMenuItem(openTaskItem);
 
     // Refresh button
     const refreshItem = new PopupMenu.PopupMenuItem('Refresh');
-    refreshItem.connect('activate', () => {
+    refreshItem.connectObject('activate', () => {
       this._checkTasks();
-    });
+    }, refreshItem);
     this._indicator.menu.addMenuItem(refreshItem);
   }
 
@@ -378,22 +378,19 @@ export default class JiraCheckerExtension extends Extension {
 
     const clutterText = entry.get_clutter_text();
 
-    const textChangedId = clutterText.connect('text-changed', () => {
-      const text = clutterText.get_text();
-      const upper = text.toUpperCase();
-      if (text !== upper) {
-        const pos = clutterText.get_cursor_position();
-        clutterText.set_text(upper);
-        clutterText.set_cursor_position(pos);
-      }
-    });
-
-    const activateId = clutterText.connect('activate', () => confirm());
-
-    dialog.connect('destroy', () => {
-      clutterText.disconnect(textChangedId);
-      clutterText.disconnect(activateId);
-    });
+    clutterText.connectObject(
+      'text-changed', () => {
+        const text = clutterText.get_text();
+        const upper = text.toUpperCase();
+        if (text !== upper) {
+          const pos = clutterText.get_cursor_position();
+          clutterText.set_text(upper);
+          clutterText.set_cursor_position(pos);
+        }
+      },
+      'activate', () => confirm(),
+      dialog
+    );
 
     dialog.setButtons([
       {
