@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icon.svg" width="64" height="64" alt="Jira Checker icon">
+  <img src="icon.svg" width="128" height="128" alt="Jira Checker">
 </p>
 
 # Jira Checker — GNOME Shell Extension

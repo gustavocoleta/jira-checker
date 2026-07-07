@@ -262,9 +262,9 @@ export default class JiraCheckerExtension extends Extension {
       let color = '#FAFAFA';
 
       if (tasks.length > 1 && tasks.length < 4) {
-        color = '#FFC107';
+        color = '#F6C709';
       } else if (tasks.length >= 4) {
-        color = '#F44336';
+        color = '#E71B08';
       }
 
       const badge = new St.Widget({
