@@ -26,7 +26,7 @@ export default class JiraCheckerPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window) {
     const settings = this.getSettings();
 
-    const version = this.metadata.version ?? 'Unknown';
+    const version = String(this.metadata.version ?? 'Unknown');
 
     // Create a preferences page
     const page = new Adw.PreferencesPage();
