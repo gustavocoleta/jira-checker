@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-07-08
+
+- feat: add changelog update script and integrate it into release workflow (64cf212)
+- fix: update version retrieval to use "version-name" in metadata.json (c4078d6)
+- fix: ensure version is a string in preferences window (eb45531)
+- chore: removed unused files and itens on package.json (4bb9a4e)
+
 ## [1.0.5] - 2026-07-07
 
 ### Added
