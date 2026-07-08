@@ -18,7 +18,7 @@ BUMP="$1"
 [[ "$BUMP" != "-major" && "$BUMP" != "-minor" && "$BUMP" != "-patch" ]] && usage
 
 # Read current version from metadata.json (source of truth)
-CURRENT=$(grep '"version"' "$METADATA" | sed 's/.*"version": *"\([^"]*\)".*/\1/')
+CURRENT=$(grep '"version-name"' "$METADATA" | sed 's/.*"version-name": *"\([^"]*\)".*/\1/')
 
 IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
 
@@ -31,7 +31,7 @@ esac
 NEW_VERSION="$MAJOR.$MINOR.$PATCH"
 
 # Update metadata.json
-sed -i "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW_VERSION\"/" "$METADATA"
+sed -i "s/\"version-name\": \"$CURRENT\"/\"version-name\": \"$NEW_VERSION\"/" "$METADATA"
 
 # Update package.json
 sed -i "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW_VERSION\"/" "$PACKAGE"

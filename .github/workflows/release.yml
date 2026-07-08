@@ -41,7 +41,7 @@ jobs:
       - name: Read new version
         id: version
         run: |
-          VERSION=$(grep '"version"' metadata.json | sed 's/.*"version": *"\([^"]*\)".*/\1/')
+          VERSION=$(grep '"version-name"' metadata.json | sed 's/.*"version-name": *"\([^"]*\)".*/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
