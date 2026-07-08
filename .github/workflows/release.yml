@@ -45,12 +45,15 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Update CHANGELOG.md
+        run: bash scripts/update-changelog.sh "${{ steps.version.outputs.version }}"
+
       - name: Build extension ZIP
         run: make pack
 
       - name: Commit and push version bump
         run: |
-          git add metadata.json package.json
+          git add metadata.json package.json CHANGELOG.md
           git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
           git push origin HEAD
 

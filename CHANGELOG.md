@@ -2,6 +2,55 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2026-07-07
+
+### Added
+
+- New extension icon and updated badge colors (a63c603)
+
+## [1.0.4] - 2026-07-06
+
+### Fixed
+
+- Adjusted errors reported by the GNOME Extensions site review for version 4 (e0cae03)
+
+## [1.0.3] - 2026-07-06
+
+### Fixed
+
+- Addressed items pointed out in publish review #3 (9f81c02)
+
+## [1.0.2] - 2026-06-26
+
+### Added
+
+- Extension icon (fa2f0f0, 1cfc272)
+
+## [1.0.1] - 2026-06-26
+
+### Fixed
+
+- Adjusted items pointed out in review (18aca47)
+
+## [1.0.0] - 2026-06-26
+
+### Added
+
+- "Jump to Task…" menu item; renamed "Open Jira" to "Browse Jira" on the icon menu (6bf6bd1)
+- "About" section in extension preferences (86c9e8f)
+- Helper script for testing in an isolated GNOME session (9026fa2)
+- Script to automate version bumping and releases (db43c22, 94c43dd)
+
+### Changed
+
+- Tray icon color-indicator values (0344b3c)
+- Adjusted extension to follow GNOME Extensions guidelines (1250318)
+- Improved code quality and logging (d754fea)
+
+### Removed
+
+- Obsolete files; updated documentation for the GNOME Shell extension (2e8ebc2)
+
 ## [2.0.1] - 2026-06-02
 
 ### Added
