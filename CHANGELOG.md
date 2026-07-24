@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2026-07-24
+
+- feat: add icon-panel.svg and update Makefile and install script to include it (eeec1f4)
+
 ## [1.1.0] - 2026-07-08
 
 - feat: add changelog update script and integrate it into release workflow (64cf212)
