@@ -118,7 +118,7 @@ export default class JiraCheckerExtension extends Extension {
   }
 
   _createPanelIcon() {
-    const iconPath = GLib.build_filenamev([this.path, 'icon.svg']);
+    const iconPath = GLib.build_filenamev([this.path, 'icon-panel.svg']);
     const file = Gio.File.new_for_path(iconPath);
     const gicon = new Gio.FileIcon({ file });
 
@@ -310,9 +310,13 @@ export default class JiraCheckerExtension extends Extension {
     if (tasks.length > 0) {
       tasks.forEach((task) => {
         const item = new PopupMenu.PopupMenuItem(task.key);
-        item.connectObject('activate', () => {
-          this._openUrl(`${config.url}/browse/${task.key}`);
-        }, this);
+        item.connectObject(
+          'activate',
+          () => {
+            this._openUrl(`${config.url}/browse/${task.key}`);
+          },
+          this,
+        );
         this._indicator.menu.addMenuItem(item);
       });
 
@@ -321,23 +325,35 @@ export default class JiraCheckerExtension extends Extension {
 
     // Open Jira button
     const openJiraItem = new PopupMenu.PopupMenuItem('Browse Jira');
-    openJiraItem.connectObject('activate', () => {
-      this._openUrl(config.url);
-    }, this);
+    openJiraItem.connectObject(
+      'activate',
+      () => {
+        this._openUrl(config.url);
+      },
+      this,
+    );
     this._indicator.menu.addMenuItem(openJiraItem);
 
     // Open Task button
     const openTaskItem = new PopupMenu.PopupMenuItem('Jump to Task…');
-    openTaskItem.connectObject('activate', () => {
-      this._openTaskDialog();
-    }, this);
+    openTaskItem.connectObject(
+      'activate',
+      () => {
+        this._openTaskDialog();
+      },
+      this,
+    );
     this._indicator.menu.addMenuItem(openTaskItem);
 
     // Refresh button
     const refreshItem = new PopupMenu.PopupMenuItem('Refresh');
-    refreshItem.connectObject('activate', () => {
-      this._checkTasks();
-    }, this);
+    refreshItem.connectObject(
+      'activate',
+      () => {
+        this._checkTasks();
+      },
+      this,
+    );
     this._indicator.menu.addMenuItem(refreshItem);
   }
 
@@ -394,7 +410,8 @@ export default class JiraCheckerExtension extends Extension {
     this._taskClutterText = clutterText;
 
     clutterText.connectObject(
-      'text-changed', () => {
+      'text-changed',
+      () => {
         const text = clutterText.get_text();
         const upper = text.toUpperCase();
         if (text !== upper) {
@@ -403,14 +420,19 @@ export default class JiraCheckerExtension extends Extension {
           clutterText.set_cursor_position(pos);
         }
       },
-      'activate', () => confirm(),
-      this
+      'activate',
+      () => confirm(),
+      this,
     );
 
-    dialog.connectObject('destroy', () => {
-      this._taskDialog = null;
-      this._taskClutterText = null;
-    }, this);
+    dialog.connectObject(
+      'destroy',
+      () => {
+        this._taskDialog = null;
+        this._taskClutterText = null;
+      },
+      this,
+    );
 
     dialog.setButtons([
       {

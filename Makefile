@@ -5,7 +5,7 @@ EXTENSION_DIR = $(HOME)/.local/share/gnome-shell/extensions/$(EXTENSION_UUID)
 BUILD_DIR = build
 
 # Files to include in the extension
-FILES = extension.js prefs.js metadata.json icon.svg
+FILES = extension.js prefs.js metadata.json icon.svg icon-panel.svg
 SCHEMAS = schemas/org.gnome.shell.extensions.jira-checker.gschema.xml
 
 .PHONY: all clean install uninstall pack compile-schemas

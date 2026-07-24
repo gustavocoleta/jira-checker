@@ -24,7 +24,7 @@ mkdir -p "$EXTENSION_DIR/schemas"
 
 # Copy files
 echo "Copying extension files..."
-cp extension.js prefs.js metadata.json icon.svg "$EXTENSION_DIR/"
+cp extension.js prefs.js metadata.json icon.svg icon-panel.svg "$EXTENSION_DIR/"
 cp -r schemas/* "$EXTENSION_DIR/schemas/"
 
 echo ""

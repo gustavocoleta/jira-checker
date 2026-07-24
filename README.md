@@ -146,6 +146,7 @@ Click **Jump to Task…** in the panel menu to open a dialog. Type a task ID (e.
 ├── schemas/
 │   └── *.gschema.xml         # GSettings schema (jira-url, jira-email, jira-auth, etc.)
 ├── icon.svg                  # Extension icon (panel + Extensions app + README)
+├── icon-panel.svg            # Extension icon for the panel
 ├── scripts/
 │   ├── upgrade-version.sh    # Bump version in metadata.json and package.json
 │   └── test-isolated-session.sh  # Launch a nested Wayland session for testing
