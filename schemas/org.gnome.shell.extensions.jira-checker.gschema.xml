@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
+  <enum id="org.gnome.shell.extensions.jira-checker.ServerType">
+    <value nick="cloud" value="0"/>
+    <value nick="datacenter" value="1"/>
+  </enum>
   <schema id="org.gnome.shell.extensions.jira-checker" path="/org/gnome/shell/extensions/jira-checker/">
     <key name="jira-url" type="s">
       <default>""</default>
@@ -14,7 +18,12 @@
     <key name="jira-auth" type="s">
       <default>""</default>
       <summary>Jira Auth Token</summary>
-      <description>Base64 encoded authentication token (email:apiToken)</description>
+      <description>Base64 encoded "email:apiToken" credentials for Jira Cloud, or a personal access token for Jira Data Center and Server</description>
+    </key>
+    <key name="server-type" enum="org.gnome.shell.extensions.jira-checker.ServerType">
+      <default>'cloud'</default>
+      <summary>Jira deployment type</summary>
+      <description>Selects both the REST endpoint and the credential format, because the two are tied together: Jira Cloud uses REST API v3 at /rest/api/3/search/jql with Basic auth, while Jira Data Center and Server only serve /rest/api/2/search and require a Bearer personal access token</description>
     </key>
     <key name="check-interval" type="i">
       <default>5</default>

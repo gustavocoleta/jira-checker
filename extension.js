@@ -114,6 +114,7 @@ export default class JiraCheckerExtension extends Extension {
       auth: this._settings.get_string('jira-auth'),
       checkInterval: this._settings.get_int('check-interval'),
       webhookUrl: this._settings.get_string('webhook-url'),
+      serverType: this._settings.get_string('server-type'),
     };
   }
 
@@ -174,7 +175,15 @@ export default class JiraCheckerExtension extends Extension {
       try {
         const jql = `assignee = "${config.email}" AND resolution IS EMPTY`;
         const encodedJql = encodeURIComponent(jql);
-        const url = `${config.url}/rest/api/3/search/jql?jql=${encodedJql}&fields=key`;
+        // Endpoint and credential format are tied to the deployment type and
+        // cannot be mixed: Jira Cloud serves REST API v3 (cursor-based
+        // /search/jql) and accepts Basic auth; Data Center and Server only
+        // serve /rest/api/2/search and require a Bearer personal access token.
+        const isCloud = config.serverType !== 'datacenter';
+        const url = isCloud
+          ? `${config.url}/rest/api/3/search/jql?jql=${encodedJql}&fields=key`
+          : `${config.url}/rest/api/2/search?jql=${encodedJql}&fields=key&maxResults=100`;
+        const authScheme = isCloud ? 'Basic' : 'Bearer';
 
         const session = new Soup.Session();
         const message = Soup.Message.new('GET', url);
@@ -182,7 +191,7 @@ export default class JiraCheckerExtension extends Extension {
         // Set headers
         message
           .get_request_headers()
-          .append('Authorization', `Basic ${config.auth}`);
+          .append('Authorization', `${authScheme} ${config.auth}`);
         message.get_request_headers().append('Accept', 'application/json');
         message
           .get_request_headers()

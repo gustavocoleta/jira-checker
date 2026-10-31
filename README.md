@@ -84,8 +84,25 @@ Or open **GNOME Settings → Extensions → Jira Checker → Settings**.
 | ------------------ | ------------------------------------------------------------ |
 | **Jira URL**       | Your Jira instance URL, e.g. `https://company.atlassian.net` |
 | **Email**          | The email address of your Jira account                       |
-| **API Token**      | Base64-encoded `email:token` credential (see below)          |
+| **Jira Type**      | `Jira Cloud` or `Jira Data Center / Server`                  |
+| **API Token**      | Base64-encoded `email:token` for Cloud, bare token for Data Center |
 | **Check Interval** | How often to poll for tasks, in minutes (1–60)               |
+
+**Jira Type** is a single switch on purpose: the REST endpoint and the
+credential format are tied together, and mixing them (v3 with a Bearer token, or
+v2 with Base64 credentials) cannot work.
+
+- **Jira Cloud** — queries `/rest/api/3/search/jql` with `Basic` auth, where the
+  token is the Base64-encoded `email:apiToken` pair (the **Generate** button
+  builds it for you).
+- **Jira Data Center / Server** — queries `/rest/api/2/search` with `Bearer`
+  auth. Create a personal access token in your Jira profile
+  (**Profile → Personal Access Tokens**) and paste the token itself, not a
+  Base64 string, into **API Token**.
+
+Click **Test connection** after filling the form: it runs the same query the
+extension runs and reports the HTTP status with a hint (wrong token, wrong
+endpoint for the chosen Jira type, or the number of tasks found).
 
 ### Generating the API token
 
