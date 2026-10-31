@@ -19,6 +19,7 @@
 import Adw from 'gi://Adw';
 import GLib from 'gi://GLib';
 import Gtk from 'gi://Gtk';
+import Soup from 'gi://Soup';
 
 import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
@@ -58,6 +59,18 @@ export default class JiraCheckerPreferences extends ExtensionPreferences {
       settings.set_string('jira-email', widget.text);
     });
     group.add(emailRow);
+
+    // Deployment type drives both the REST endpoint and the credential format
+    const serverTypeRow = new Adw.ComboRow({
+      title: 'Jira Type',
+      subtitle: 'Cloud uses REST API v3 with Basic auth; Data Center uses v2 with a Bearer token',
+      model: Gtk.StringList.new([
+        'Jira Cloud',
+        'Jira Data Center / Server',
+      ]),
+      selected: settings.get_string('server-type') === 'datacenter' ? 1 : 0,
+    });
+    group.add(serverTypeRow);
 
     // API Token row with button to generate token
     const tokenRow = new Adw.ActionRow({
@@ -118,6 +131,121 @@ export default class JiraCheckerPreferences extends ExtensionPreferences {
       dialog.present(window);
     });
     tokenRow.add_suffix(generateButton);
+
+    // "Test connection" runs the exact query the extension uses, so a wrong
+    // deployment type or stale token is reported here instead of failing
+    // silently in the panel menu.
+    const testRow = new Adw.ActionRow({
+      title: 'Test connection',
+      subtitle: 'Checks the saved URL, token and Jira type',
+    });
+    const testButton = new Gtk.Button({
+      label: 'Test',
+      valign: Gtk.Align.CENTER,
+    });
+    testRow.add_suffix(testButton);
+    group.add(testRow);
+
+    const reportConnection = (status, detail) => {
+      const ok = status === 200;
+      testRow.set_subtitle(
+        ok
+          ? `Connected — ${detail}`
+          : `Failed${status ? ` (HTTP ${status})` : ''} — ${detail}`,
+      );
+    };
+
+    testButton.connect('clicked', () => {
+      const url = settings.get_string('jira-url').replace(/\/+$/, '');
+      const email = settings.get_string('jira-email');
+      const auth = settings.get_string('jira-auth');
+      if (!url || !email || !auth) {
+        reportConnection(0, 'fill in Jira URL, email and API token first');
+        return;
+      }
+
+      const isCloud = settings.get_string('server-type') !== 'datacenter';
+      const jql = encodeURIComponent(
+        `assignee = "${email}" AND resolution IS EMPTY`,
+      );
+      const endpoint = isCloud
+        ? `${url}/rest/api/3/search/jql?jql=${jql}&fields=key`
+        : `${url}/rest/api/2/search?jql=${jql}&fields=key&maxResults=100`;
+
+      testButton.set_sensitive(false);
+      testRow.set_subtitle('Checking…');
+
+      const session = new Soup.Session();
+      const message = Soup.Message.new('GET', endpoint);
+      message
+        .get_request_headers()
+        .append('Authorization', `${isCloud ? 'Basic' : 'Bearer'} ${auth}`);
+      message.get_request_headers().append('Accept', 'application/json');
+
+      session.send_and_read_async(
+        message,
+        GLib.PRIORITY_DEFAULT,
+        null,
+        (source, result) => {
+          let body = '';
+          try {
+            const bytes = source.send_and_read_finish(result);
+            body = new TextDecoder().decode(bytes.get_data() ?? []);
+          } catch (error) {
+            body = String(error);
+          }
+
+          const status = message.get_status();
+          if (status === 200) {
+            let count = 0;
+            try {
+              count = (JSON.parse(body).issues ?? []).length;
+            } catch {
+              count = 0;
+            }
+            reportConnection(status, `${count} assigned task(s) found`);
+          } else if (status === 401 || status === 403) {
+            reportConnection(
+              status,
+              isCloud
+                ? 'check the Base64 email:token value'
+                : 'check the personal access token',
+            );
+          } else if (status === 404) {
+            reportConnection(
+              status,
+              isCloud
+                ? 'endpoint not found — is this really Jira Cloud?'
+                : 'endpoint not found — is this really Data Center / Server?',
+            );
+          } else {
+            reportConnection(status, 'see the extension log for details');
+          }
+          testButton.set_sensitive(true);
+        },
+      );
+    });
+
+    // The generate helper talks to Atlassian's Cloud token page; on Data Center
+    // and Server a personal access token is created in the user's profile.
+    const updateAuthUi = () => {
+      const bearer = settings.get_string('server-type') === 'datacenter';
+      tokenRow.set_subtitle(
+        bearer
+          ? 'Personal access token (Data Center / Server)'
+          : 'Base64 encoded authentication (email:token)',
+      );
+      generateButton.set_visible(!bearer);
+    };
+    serverTypeRow.connect('notify::selected', (widget) => {
+      settings.set_string(
+        'server-type',
+        widget.selected === 1 ? 'datacenter' : 'cloud',
+      );
+      updateAuthUi();
+    });
+    updateAuthUi();
+
     group.add(tokenRow);
 
     // Check interval
